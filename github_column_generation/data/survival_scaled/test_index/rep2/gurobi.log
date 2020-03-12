@@ -1,0 +1,378 @@
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Changed value of parameter Crossover to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Optimize a model with 14544 rows, 14818 columns and 3987365 nonzeros
+Coefficient statistics:
+  Matrix range     [1e-03, 8e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 5 rows and 23 columns
+Presolve time: 1.79s
+Presolved: 14539 rows, 14795 columns, 3726291 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.0653637e+06   0.000000e+00   9.854017e+05      2s
+     775    8.2559423e+04   0.000000e+00   2.642814e+06      6s
+    1895    2.3634471e+04   0.000000e+00   1.952135e+06     11s
+    2875    1.5134613e+04   0.000000e+00   8.462756e+05     15s
+    3955    1.0089661e+04   0.000000e+00   5.500654e+05     20s
+    4945    7.4706033e+03   0.000000e+00   5.299865e+05     25s
+    5945    6.0251607e+03   0.000000e+00   1.504828e+06     30s
+    6935    4.9306877e+03   0.000000e+00   2.194985e+06     35s
+    7935    4.3072076e+03   0.000000e+00   1.141360e+06     40s
+    8885    3.9345292e+03   0.000000e+00   2.165103e+06     46s
+    9675    3.6896521e+03   0.000000e+00   7.779842e+04     50s
+   10575    3.5043344e+03   0.000000e+00   5.398343e+04     55s
+   11495    3.3746974e+03   0.000000e+00   1.340303e+05     60s
+   12475    3.2242904e+03   0.000000e+00   1.007016e+05     66s
+   13255    3.1453596e+03   0.000000e+00   2.583254e+04     70s
+   14145    3.0663312e+03   0.000000e+00   3.809402e+04     75s
+   15125    3.0313700e+03   0.000000e+00   2.514630e+04     80s
+   15655    3.0263754e+03   0.000000e+00   0.000000e+00     84s
+
+Solved in 15655 iterations and 83.61 seconds
+Optimal objective  3.026375441e+03
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Changed value of parameter Crossover to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Optimize a model with 14746 rows, 15021 columns and 4058162 nonzeros
+Coefficient statistics:
+  Matrix range     [9e-04, 8e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 5 rows and 24 columns
+Presolve time: 1.80s
+Presolved: 14741 rows, 14997 columns, 3778704 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.0749517e+06   0.000000e+00   9.968786e+05      2s
+     626    9.8489933e+04   0.000000e+00   6.080411e+06      5s
+    1746    2.5423348e+04   0.000000e+00   1.745880e+06     10s
+    2876    1.3644963e+04   0.000000e+00   1.068962e+06     16s
+    3886    9.6720641e+03   0.000000e+00   6.465873e+05     20s
+    4896    7.1932959e+03   0.000000e+00   9.064680e+05     26s
+    5926    5.8988118e+03   0.000000e+00   2.816087e+05     31s
+    6796    5.2966327e+03   0.000000e+00   3.957349e+05     35s
+    7806    4.7008868e+03   0.000000e+00   1.624754e+05     41s
+    8786    4.2568147e+03   0.000000e+00   1.836994e+05     46s
+    9546    3.9738057e+03   0.000000e+00   5.806225e+05     50s
+   10456    3.7036396e+03   0.000000e+00   3.978606e+05     55s
+   11306    3.4611291e+03   0.000000e+00   1.597208e+06     60s
+   12236    3.2815176e+03   0.000000e+00   6.002296e+05     66s
+   12976    3.1590295e+03   0.000000e+00   9.176653e+04     70s
+   13876    3.0441863e+03   0.000000e+00   9.125173e+04     75s
+   14736    2.9571233e+03   0.000000e+00   8.443275e+04     80s
+   15566    2.8897425e+03   0.000000e+00   8.707696e+04     85s
+   16596    2.8300698e+03   0.000000e+00   9.173135e+03     91s
+   17051    2.8259988e+03   0.000000e+00   0.000000e+00     93s
+
+Solved in 17051 iterations and 93.49 seconds
+Optimal objective  2.825998757e+03
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Changed value of parameter Crossover to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Optimize a model with 14746 rows, 15021 columns and 4058103 nonzeros
+Coefficient statistics:
+  Matrix range     [9e-04, 9e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 5 rows and 25 columns
+Presolve time: 1.78s
+Presolved: 14741 rows, 14996 columns, 3763997 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.0426284e+06   0.000000e+00   9.427741e+05      2s
+     626    9.5291212e+04   0.000000e+00   1.200951e+07      5s
+    1756    2.3138514e+04   0.000000e+00   1.252073e+06     10s
+    2916    1.3830920e+04   0.000000e+00   1.421699e+06     16s
+    3946    9.7282221e+03   0.000000e+00   9.666876e+05     20s
+    4946    7.5815508e+03   0.000000e+00   2.499303e+06     25s
+    5886    6.2811496e+03   0.000000e+00   2.987892e+06     30s
+    6816    5.3694064e+03   0.000000e+00   1.071606e+06     35s
+    7676    4.8774641e+03   0.000000e+00   5.935516e+05     40s
+    8706    4.2865030e+03   0.000000e+00   5.645742e+05     45s
+    9666    3.9006875e+03   0.000000e+00   1.679909e+05     51s
+   10446    3.7009526e+03   0.000000e+00   4.220622e+05     55s
+   11376    3.4946653e+03   0.000000e+00   1.088796e+05     60s
+   12246    3.2866198e+03   0.000000e+00   1.155229e+05     65s
+   13166    3.1100465e+03   0.000000e+00   7.386640e+04     71s
+   13916    3.0080130e+03   0.000000e+00   2.488246e+05     75s
+   14816    2.9377184e+03   0.000000e+00   8.052396e+04     80s
+   15736    2.8643368e+03   0.000000e+00   5.594956e+04     85s
+   16616    2.8164961e+03   0.000000e+00   4.358530e+04     90s
+   17591    2.8009578e+03   0.000000e+00   0.000000e+00     96s
+   17591    2.8009578e+03   0.000000e+00   0.000000e+00     96s
+
+Solved in 17591 iterations and 95.94 seconds
+Optimal objective  2.800957783e+03
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Changed value of parameter Crossover to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Optimize a model with 14746 rows, 15021 columns and 4057654 nonzeros
+Coefficient statistics:
+  Matrix range     [1e-03, 8e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 5 rows and 24 columns
+Presolve time: 1.80s
+Presolved: 14741 rows, 14997 columns, 3778302 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.0778178e+06   0.000000e+00   9.932807e+05      2s
+     616    1.0721055e+05   0.000000e+00   1.887270e+06      5s
+    1736    2.2122110e+04   0.000000e+00   1.118501e+06     10s
+    2876    1.2388705e+04   0.000000e+00   1.888907e+06     16s
+    3866    9.3833187e+03   0.000000e+00   1.081002e+06     20s
+    4846    7.5616437e+03   0.000000e+00   1.236339e+06     25s
+    5856    6.1435564e+03   0.000000e+00   7.244136e+05     31s
+    6916    5.4583900e+03   0.000000e+00   1.087415e+06     36s
+    7716    4.9313148e+03   0.000000e+00   6.870068e+05     40s
+    8706    4.4644907e+03   0.000000e+00   4.540684e+06     45s
+    9656    4.1330068e+03   0.000000e+00   4.040597e+05     51s
+   10476    3.8999545e+03   0.000000e+00   2.394255e+05     55s
+   11456    3.6673080e+03   0.000000e+00   2.498876e+05     61s
+   12256    3.5149829e+03   0.000000e+00   2.332573e+05     65s
+   13176    3.3565307e+03   0.000000e+00   1.826929e+05     71s
+   13926    3.2630896e+03   0.000000e+00   6.859210e+04     75s
+   14816    3.1763975e+03   0.000000e+00   2.668816e+05     80s
+   15806    3.1122771e+03   0.000000e+00   5.763025e+04     86s
+   16766    3.0814669e+03   0.000000e+00   3.700805e+04     91s
+   17271    3.0777186e+03   0.000000e+00   0.000000e+00     94s
+
+Solved in 17271 iterations and 93.86 seconds
+Optimal objective  3.077718591e+03
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Changed value of parameter Crossover to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Optimize a model with 14746 rows, 15021 columns and 4057387 nonzeros
+Coefficient statistics:
+  Matrix range     [1e-03, 8e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 5 rows and 24 columns
+Presolve time: 1.80s
+Presolved: 14741 rows, 14997 columns, 3778056 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.1630441e+06   0.000000e+00   1.082800e+06      2s
+     627    1.1913260e+05   0.000000e+00   2.455236e+06      5s
+    1777    3.4613950e+04   0.000000e+00   1.045247e+06     10s
+    2917    1.4984596e+04   0.000000e+00   1.077832e+06     15s
+    3867    1.0904196e+04   0.000000e+00   4.907399e+06     20s
+    4907    8.0394044e+03   0.000000e+00   5.916409e+05     26s
+    5797    6.4456904e+03   0.000000e+00   1.518103e+06     30s
+    6847    5.4798605e+03   0.000000e+00   2.145271e+06     35s
+    7847    4.9662852e+03   0.000000e+00   7.710369e+05     41s
+    8657    4.4502458e+03   0.000000e+00   1.891683e+06     45s
+    9487    4.0587876e+03   0.000000e+00   4.643846e+05     50s
+   10497    3.7862177e+03   0.000000e+00   9.700282e+05     55s
+   11427    3.5608160e+03   0.000000e+00   1.186681e+05     61s
+   12207    3.4016529e+03   0.000000e+00   5.378537e+04     65s
+   13117    3.2693187e+03   0.000000e+00   4.816919e+05     71s
+   13877    3.1864671e+03   0.000000e+00   5.860276e+04     75s
+   14787    3.1109126e+03   0.000000e+00   3.035154e+04     80s
+   15807    3.0391993e+03   0.000000e+00   1.260628e+04     86s
+   16703    3.0243520e+03   0.000000e+00   0.000000e+00     91s
+
+Solved in 16703 iterations and 90.73 seconds
+Optimal objective  3.024352018e+03
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Changed value of parameter Crossover to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Optimize a model with 14819 rows, 15095 columns and 4093167 nonzeros
+Coefficient statistics:
+  Matrix range     [9e-04, 8e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 5 rows and 25 columns
+Presolve time: 1.81s
+Presolved: 14814 rows, 15070 columns, 3797614 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.0928862e+06   0.000000e+00   9.999988e+05      2s
+     626    7.9233667e+04   0.000000e+00   1.293571e+06      5s
+    1746    2.2302937e+04   0.000000e+00   5.666185e+05     10s
+    2706    1.2826800e+04   0.000000e+00   9.494305e+05     15s
+    3676    9.4691148e+03   0.000000e+00   1.387700e+06     20s
+    4826    7.3160625e+03   0.000000e+00   1.588451e+06     26s
+    5656    6.2594736e+03   0.000000e+00   1.519166e+06     30s
+    6666    5.3697956e+03   0.000000e+00   1.213070e+06     36s
+    7496    4.8974694e+03   0.000000e+00   9.851844e+05     40s
+    8446    4.5334175e+03   0.000000e+00   1.517442e+05     45s
+    9356    4.1626188e+03   0.000000e+00   1.623771e+05     51s
+   10266    3.9260303e+03   0.000000e+00   2.311472e+05     56s
+   11036    3.7362830e+03   0.000000e+00   6.116912e+05     60s
+   11946    3.5563718e+03   0.000000e+00   1.093455e+05     66s
+   12696    3.4454940e+03   0.000000e+00   1.781566e+05     70s
+   13596    3.3187052e+03   0.000000e+00   2.186927e+05     75s
+   14456    3.2402196e+03   0.000000e+00   1.847980e+04     80s
+   15356    3.2024287e+03   0.000000e+00   6.874085e+03     85s
+   15899    3.1985883e+03   0.000000e+00   0.000000e+00     89s
+
+Solved in 15899 iterations and 88.54 seconds
+Optimal objective  3.198588338e+03
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Changed value of parameter Crossover to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Optimize a model with 14819 rows, 15095 columns and 4092839 nonzeros
+Coefficient statistics:
+  Matrix range     [9e-04, 9e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 5 rows and 22 columns
+Presolve time: 1.80s
+Presolved: 14814 rows, 15073 columns, 3841617 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.0884533e+06   0.000000e+00   1.006071e+06      2s
+     616    1.1879825e+05   0.000000e+00   3.467968e+06      5s
+    1736    2.4103293e+04   0.000000e+00   1.685681e+06     10s
+    2706    1.4927435e+04   0.000000e+00   1.151087e+06     15s
+    3806    1.0486119e+04   0.000000e+00   1.773598e+06     21s
+    4706    8.4324393e+03   0.000000e+00   2.475952e+06     25s
+    5636    6.5905845e+03   0.000000e+00   9.804888e+05     30s
+    6646    5.2679491e+03   0.000000e+00   1.956258e+06     36s
+    7586    4.6179977e+03   0.000000e+00   1.929553e+05     41s
+    8486    4.1792642e+03   0.000000e+00   3.296842e+05     46s
+    9256    3.8546710e+03   0.000000e+00   1.857573e+05     50s
+   10246    3.5135189e+03   0.000000e+00   1.534119e+05     56s
+   10996    3.2852681e+03   0.000000e+00   2.392068e+05     60s
+   11886    3.1224885e+03   0.000000e+00   1.111428e+05     66s
+   12656    3.0168553e+03   0.000000e+00   4.559456e+04     70s
+   13536    2.9293201e+03   0.000000e+00   3.074242e+04     75s
+   14376    2.8485687e+03   0.000000e+00   3.057421e+05     80s
+   15206    2.8010770e+03   0.000000e+00   6.230256e+04     85s
+   16026    2.7696946e+03   0.000000e+00   2.590498e+04     90s
+   17026    2.7409729e+03   0.000000e+00   1.063795e+04     96s
+   17333    2.7397857e+03   0.000000e+00   0.000000e+00     98s
+
+Solved in 17333 iterations and 97.56 seconds
+Optimal objective  2.739785703e+03
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Changed value of parameter Crossover to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Optimize a model with 14819 rows, 15095 columns and 4092866 nonzeros
+Coefficient statistics:
+  Matrix range     [1e-03, 8e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 5 rows and 23 columns
+Presolve time: 1.82s
+Presolved: 14814 rows, 15072 columns, 3826921 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.0621072e+06   0.000000e+00   9.831064e+05      2s
+     828    8.0695783e+04   0.000000e+00   4.248386e+06      6s
+    1968    2.9930048e+04   0.000000e+00   3.178845e+06     11s
+    2938    1.3845963e+04   0.000000e+00   1.520297e+06     15s
+    3958    9.2387788e+03   0.000000e+00   4.584012e+06     21s
+    4978    7.1716848e+03   0.000000e+00   1.424298e+06     26s
+    5878    6.2350292e+03   0.000000e+00   1.727099e+06     30s
+    6868    5.3451758e+03   0.000000e+00   1.299853e+06     36s
+    7738    4.8564404e+03   0.000000e+00   6.082038e+05     40s
+    8628    4.3568566e+03   0.000000e+00   3.736586e+05     45s
+    9648    3.9708560e+03   0.000000e+00   2.755537e+05     51s
+   10458    3.7245817e+03   0.000000e+00   8.941073e+05     55s
+   11378    3.4840897e+03   0.000000e+00   5.212471e+05     61s
+   12138    3.2931310e+03   0.000000e+00   3.305882e+05     65s
+   12908    3.1647527e+03   0.000000e+00   1.104379e+06     70s
+   13798    3.0477367e+03   0.000000e+00   5.648355e+05     75s
+   14708    2.9402827e+03   0.000000e+00   5.970434e+04     81s
+   15468    2.8670707e+03   0.000000e+00   1.151965e+05     85s
+   16328    2.7899135e+03   0.000000e+00   5.037359e+04     90s
+   17318    2.7476103e+03   0.000000e+00   1.826160e+04     96s
+   18158    2.7325327e+03   0.000000e+00   1.803793e+01    100s
+   18174    2.7325308e+03   0.000000e+00   0.000000e+00    101s
+
+Solved in 18174 iterations and 100.87 seconds
+Optimal objective  2.732530828e+03
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Changed value of parameter Crossover to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Optimize a model with 14819 rows, 15095 columns and 4093106 nonzeros
+Coefficient statistics:
+  Matrix range     [9e-04, 8e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 6 rows and 26 columns
+Presolve time: 1.81s
+Presolved: 14813 rows, 15069 columns, 3797573 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.0062242e+06   0.000000e+00   9.326625e+05      2s
+     616    1.0072640e+05   0.000000e+00   5.637474e+06      5s
+    1726    2.5468299e+04   0.000000e+00   8.331868e+05     10s
+    2686    1.3757330e+04   0.000000e+00   1.753776e+06     15s
+    3646    9.9853977e+03   0.000000e+00   9.101316e+05     20s
+    4596    7.7313518e+03   0.000000e+00   4.290679e+05     25s
+    5536    6.4096205e+03   0.000000e+00   2.030444e+06     30s
+    6506    5.6364124e+03   0.000000e+00   9.442125e+05     35s
+    7526    4.9728041e+03   0.000000e+00   4.453380e+05     41s
+    8296    4.5629480e+03   0.000000e+00   4.518014e+05     45s
+    9236    4.1292504e+03   0.000000e+00   3.240221e+06     50s
+    9996    3.8636876e+03   0.000000e+00   6.854531e+05     55s
+   10946    3.6254218e+03   0.000000e+00   1.507038e+07     61s
+   11696    3.5051112e+03   0.000000e+00   1.824774e+05     65s
+   12586    3.3574134e+03   0.000000e+00   2.175276e+05     70s
+   13466    3.2618542e+03   0.000000e+00   7.992869e+04     76s
+   14216    3.1718954e+03   0.000000e+00   3.581569e+04     80s
+   15116    3.0985289e+03   0.000000e+00   2.921973e+04     85s
+   15976    3.0563817e+03   0.000000e+00   2.978766e+04     90s
+   16628    3.0481489e+03   0.000000e+00   0.000000e+00     94s
+
+Solved in 16628 iterations and 94.15 seconds
+Optimal objective  3.048148917e+03
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Changed value of parameter Crossover to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+Optimize a model with 14819 rows, 15095 columns and 4093180 nonzeros
+Coefficient statistics:
+  Matrix range     [9e-04, 8e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 5 rows and 24 columns
+Presolve time: 1.81s
+Presolved: 14814 rows, 15071 columns, 3812411 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.0210438e+06   0.000000e+00   9.378682e+05      2s
+     646    9.4239526e+04   0.000000e+00   3.016860e+06      5s
+    1756    2.5505449e+04   0.000000e+00   6.892478e+05     10s
+    2716    1.3369582e+04   0.000000e+00   4.802558e+05     15s
+    3836    9.9023122e+03   0.000000e+00   7.732164e+05     21s
+    4716    7.9709029e+03   0.000000e+00   5.342432e+05     25s
+    5686    6.6979367e+03   0.000000e+00   1.389811e+06     30s
+    6666    5.8999430e+03   0.000000e+00   9.194558e+05     35s
+    7626    5.1645445e+03   0.000000e+00   3.034434e+05     40s
+    8586    4.4962423e+03   0.000000e+00   3.098539e+05     46s
+    9376    4.1455457e+03   0.000000e+00   2.390650e+05     50s
+   10356    3.7994722e+03   0.000000e+00   5.225299e+05     56s
+   11156    3.5868776e+03   0.000000e+00   2.289947e+05     60s
+   12076    3.4072403e+03   0.000000e+00   1.324279e+05     66s
+   12846    3.2864515e+03   0.000000e+00   3.746330e+05     70s
+   13696    3.2079398e+03   0.000000e+00   4.234580e+04     75s
+   14576    3.1362228e+03   0.000000e+00   1.738156e+04     80s
+   15294    3.1279579e+03   0.000000e+00   0.000000e+00     84s
+
+Solved in 15294 iterations and 84.47 seconds
+Optimal objective  3.127957911e+03
