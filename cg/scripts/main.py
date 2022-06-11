@@ -116,37 +116,6 @@ method1.run()
 
 #%%
 
-#os.chdir(script_location)
-#from smooth_ranking_cg import base_srcg
-
-"""
-TODO:
-   stp_perc         : controls the column generation iterations.
-   lr               : controls the magnitude of gradient steps.
-   weight_smoothing : Applies exponential smoothing to weights in solve_problem_with_new_column
-                      method by using the weight list and alpha parameter.
-"""
-stp_perc=0.005
-lr=1000
-alpha=0.1
-weight_smoothing=False
-
-# method1=base_srcg(train_data,train_class,test_data,test_class,df,df_test,
-#                           distance="euclidian",stopping_condition="obj",
-#                           stopping_percentage=stp_perc,lr=lr,
-#                           selected_col_index=0,scale=True)
-#method1.run()
-#print(method1.test_roc_list)
-#print(method1.test_accuracy_list)
-#print(method1.objective_values)
-#print(method1.real_training_objective)
-
-
-
-
-#%%
-#method1.test_roc_list
-#method1.test_accuracy_list
 
 
 
