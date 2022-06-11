@@ -60,6 +60,7 @@ Parameters:
                                 dec_lr
                                 exp_smooth
                                 dec_lr_exp_smooth
+                                l1_rank
                                
                                
                                
@@ -68,7 +69,10 @@ Parameters:
     stp_cond         : the rule stopping cg iterations.
                       Options
                               real_tr_obj : considers only the sum xi_{p,n} values. 
-                              tr_obj      : the surrogate objective we are minimizing.    
+                              
+                              tr_obj      : considers the surrogate objective we are minimizing. 
+                                                   the sum xi_{p,n} + deviation penalizer.
+                               
                               tr_roc      : considers calculated tr roc values. We expect this
                                             to be similar to real_tr_obj. Also, I believe that
                                             it is easier to explain the first two options.
@@ -90,7 +94,7 @@ Parameters:
 
 
 
-alg_type="dec_lr_exp_smooth"
+alg_type="l1_rank"
 stp_perc=0.01
 stp_cond="tr_obj"
 lr=1.0
