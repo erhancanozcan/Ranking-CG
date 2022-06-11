@@ -1,0 +1,1 @@
+from cg.scripts.algs.init_alg import init_alg
