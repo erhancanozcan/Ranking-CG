@@ -75,10 +75,10 @@ Parameters:
 
 
 
-alg_type="l1_rank"
+alg_type="l1_rank_cg"
 stp_perc=0.01
 stp_cond="tr_obj"
-lr=0.1
+lr=100.0
 alpha=0.1
 
 
@@ -98,6 +98,9 @@ method1.run()
 
 #print(method1.objective_values)
 #print(method1.real_training_objective)
+
+#learned weights
+#method1.weight_record[-1]
 
 #%%
 

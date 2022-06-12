@@ -150,7 +150,8 @@ class l1_rank(base_srcg):
         
         test_predict=self.fclf.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
         self.test_accuracy_list=[accuracy_score(res_with_class.testclass.values.reshape(len(res_with_class),1), test_predict)]
-                
+        
+        self.weight_record=[self.fweight_list]
         
         
         
