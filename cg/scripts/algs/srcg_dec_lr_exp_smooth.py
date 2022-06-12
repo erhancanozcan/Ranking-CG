@@ -35,4 +35,4 @@ class srcg_dec_lr_exp_smooth(base_srcg):
         return self.weight_memory
     
     def schedule_lr(self):
-        self.lr=self.lr_init*self.counter
+        self.lr=self.lr_init*(self.counter**0.5)

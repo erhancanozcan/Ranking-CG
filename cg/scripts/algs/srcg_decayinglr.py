@@ -23,4 +23,4 @@ class srcg_decayinglr(base_srcg):
         return self.weight_record[-1] 
     
     def schedule_lr(self):
-        self.lr=self.lr_init*self.counter
+        self.lr=self.lr_init*(self.counter**0.5)

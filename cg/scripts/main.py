@@ -75,10 +75,10 @@ Parameters:
 
 
 
-alg_type="l1_rank_cg"
+alg_type="dec_lr_exp_smooth"
 stp_perc=0.01
 stp_cond="tr_obj"
-lr=100.0
+lr=1.0
 alpha=0.1
 
 
