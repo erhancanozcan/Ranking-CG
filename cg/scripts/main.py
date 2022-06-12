@@ -61,6 +61,7 @@ Parameters:
                                 exp_smooth
                                 dec_lr_exp_smooth
                                 l1_rank
+                                l1_rank_cg
                                
                                
                                
@@ -97,7 +98,7 @@ Parameters:
 alg_type="l1_rank"
 stp_perc=0.01
 stp_cond="tr_obj"
-lr=1.0
+lr=0.1
 alpha=0.1
 
 
@@ -122,7 +123,9 @@ method1.run()
 
 
 
-
+[0.50617284 0.65432099 0.85185185 0.9382716  0.92592593 0.92592593
+ 0.9382716  0.95061728 0.95061728 0.95061728 0.95061728 0.95061728
+ 0.95061728]
 
 
 

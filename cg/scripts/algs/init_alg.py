@@ -3,6 +3,7 @@ from cg.scripts.algs.srcg_decayinglr import srcg_decayinglr
 from cg.scripts.algs.srcg_exp_smooth import srcg_exp_smooth
 from cg.scripts.algs.srcg_dec_lr_exp_smooth import srcg_dec_lr_exp_smooth
 from cg.scripts.algs.l1_rank import l1_rank
+from cg.scripts.algs.l1_rank_cg import l1_rank_cg
 
 """"Interface to algorithms"""
 
@@ -41,6 +42,12 @@ def init_alg(alg_type,train_data,train_class,test_data,test_class,df,df_test,
     elif alg_type == "l1_rank":
         # no smoothing but learning rate is scaled by iteration number.
         return l1_rank(train_data,train_class,test_data,test_class,df,df_test,
+                                  distance=distance,stopping_condition=stopping_condition,
+                                  stopping_percentage=stopping_percentage,lr=lr,
+                                  selected_col_index=0,scale=scale)
+    elif alg_type == "l1_rank_cg":
+        # no smoothing but learning rate is scaled by iteration number.
+        return l1_rank_cg(train_data,train_class,test_data,test_class,df,df_test,
                                   distance=distance,stopping_condition=stopping_condition,
                                   stopping_percentage=stopping_percentage,lr=lr,
                                   selected_col_index=0,scale=scale)

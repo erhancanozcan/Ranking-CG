@@ -386,6 +386,7 @@ class base_srcg:
         self.abs_dev_variables.append(self.m.addVar(lb=0.0,name="s"+self.w_name))
         
         
+        #obj=self.obj+lr*quicksum(self.abs_dev_variables[i] for i in range(len(self.abs_dev_variables)))
         obj=self.obj+lr*quicksum(var for var in self.abs_dev_variables)
         self.m.setObjective(obj, GRB.MINIMIZE)
         
