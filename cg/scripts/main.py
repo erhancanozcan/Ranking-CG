@@ -16,30 +16,10 @@ d_name="xor"
 
 
 from cg.scripts.read_available_datasets import selected_data_set
-#from cg.scripts.algs.smooth_ranking_cg import base_srcg
 
-#import os
-#import datetime
-#import math
-#import pandas as pd
-#from scipy.spatial import distance_matrix
-#import numpy as np
-#from gurobipy import *
-#from sklearn.metrics import accuracy_score
-#from sklearn.metrics import roc_auc_score
-#from sklearn.tree import DecisionTreeClassifier
-#os.chdir(script_location)
 
-#from sklearn import tree
-#import matplotlib.pyplot as plt
-#from scipy import signal
-#import scipy
-#from scipy import stats
-#from scipy.stats import iqr
-#import itertools
 import random
-#import cvxpy as cp
-#from cvxpy.atoms.pnorm import pnorm
+
 
 
 
