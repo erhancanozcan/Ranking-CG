@@ -1,0 +1,159 @@
+"""
+    srcg: constant learning rate with no exponential smoothing
+"""
+from cg.scripts.algs.base_srcg import base_srcg
+import numpy as np
+import pandas as pd
+from gurobipy import *
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import roc_auc_score
+from sklearn.tree import DecisionTreeClassifier
+from sklearn import tree
+from scipy.spatial import distance_matrix
+
+class l_inf_rank(base_srcg):
+    
+    def __init__(self,train_data,train_class,test_data,test_class,df,df_test,
+                      distance="euclidian",stopping_condition=None,
+                      stopping_percentage=None,lr=None,
+                      selected_col_index=0,scale=True):
+        
+     
+        
+        super(l_inf_rank,self).__init__(train_data,train_class,test_data,test_class,df,df_test,
+                          distance=distance,stopping_condition=stopping_condition,
+                          stopping_percentage=stopping_percentage,lr=lr,
+                          selected_col_index=0,scale=scale)
+    
+    
+    #def reference_weights(self):
+    #    return np.zeros(len(self.weight_record[-1])) 
+    
+    def schedule_lr(self):
+        self.lr=self.lr_init
+        
+    
+    def run(self):
+        """
+        in l1_rank model no column generation takes place. We optimize full model
+        with l1 penalty.
+        """
+        #pre-process data 
+        self.data_preprocess()
+        
+        #set regularization parameter
+        self.schedule_lr()
+        
+        #construct model
+        self.fm = Model("full_model")
+        
+        
+        no_points=self.tmp_dist_city.shape[1]
+        weight_names=[]
+        
+        for i in range(no_points):
+            weight_names.append("w"+str(i))
+            
+        
+        
+        self.fweights=self.fm.addVars(no_points,lb=-GRB.INFINITY,name=weight_names)
+        self.absweights=self.fm.addVars(no_points,lb=0.0,name="abs")
+        self.max_weight=self.fm.addVar(lb=0.0,name="max_abs")
+        #self.fweights=self.fm.addVars(no_points,lb=-GRB.INFINITY,name=weight_names)
+        errors  = self.fm.addVars(len(self.pos),len(self.neg),lb=0.0,name="e")
+        
+        
+        obj=(quicksum(errors[f] for f in errors)+ self.lr*self.max_weight)
+        
+        self.fm.setObjective(obj, GRB.MINIMIZE)
+        
+        #constraints
+        
+        
+        self.f_constrain=self.fm.addConstrs((errors[i,j] + 
+        quicksum(self.fweights[k]*(self.tmp_dist_city[i*len(self.neg)+j,k]) 
+        for k in range(len(self.fweights))) >= 1 for i, j in 
+        itertools.product(range(len(self.pos)), 
+        range(len(self.neg)))),name='c')
+        
+        
+        #self.fm.addConstrs((self.absweights[i]==abs_(self.fweights[i]) for i in range(no_points)),name="tmp")
+        self.abs_pos=self.fm.addConstrs((self.absweights[i] - self.fweights[i] >= 0.0 for i in range (no_points)),name="aaa")
+        self.abs_neg=self.fm.addConstrs((self.absweights[i] + self.fweights[i] >= 0.0 for i in range (no_points)),name="bbb")
+        self.max_abs_norm=self.fm.addConstrs((self.max_weight >= self.absweights[i] for i in range (no_points)),name="ccc")
+        
+        
+        
+        self.fm.Params.Method=1
+        #self.fm.Params.Crossover = 0
+        self.fm.optimize()
+        
+        
+        i=0
+        for i in range(len(self.fweights)):
+            tmp=weight_names[i]
+            
+            if i==0:
+                self.fcol_list=np.array(int(tmp[1:]))
+                self.fweight_list=np.array(self.fweights[i].X)
+            else:
+                self.fcol_list=np.append(self.fcol_list,int(tmp[1:]))
+                self.fweight_list=np.append(self.fweight_list,self.fweights[i].X)
+                
+        
+        train_class_numpy=self.train_class.values
+        res_train=np.dot(self.data_distance_numpy[:,self.fcol_list],self.fweight_list)
+        res_train=res_train.reshape(len(res_train),1)
+        
+        res_with_class=pd.DataFrame({'trainclass':train_class_numpy[:,0],'memb':res_train[:,0]},index=range(len(res_train)))
+        #accuracy
+        self.fclf=tree.DecisionTreeClassifier(max_depth=1)
+        self.fclf.fit(res_with_class.memb.values.reshape(len(res_with_class),1),res_with_class.trainclass.values.reshape(len(res_with_class),1))
+        train_predict=self.fclf.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
+        self.train_accuracy_list=[accuracy_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)]
+                
+        self.train_roc_list=[roc_auc_score(res_with_class.trainclass,res_with_class.memb)]        
+        
+        #print(method1.real_training_objective)
+        
+        self.objective_values=[self.fm.objVal]
+        
+        err_counter=0
+        record=np.zeros(len(self.pos)*len(self.neg))
+        for x in self.fm.getVars():
+            if x.VarName.find("e")!=-1:
+                record[err_counter]=x.X
+                err_counter+=1
+        record=record.reshape(1,len(self.pos),len(self.neg))
+        
+        
+        self.real_training_objective=[np.sum(record)]
+        
+        
+        
+        ## training related calculations are done. Calculate test performance.
+        
+        test_class_numpy=np.array(self.test_class)
+        test_data_numpy=self.test_data.values
+           
+        te_tr_distance=pd.DataFrame(distance_matrix(test_data_numpy, self.train_data), index=self.test_data.index)
+        te_tr_distance=te_tr_distance.values
+        te_tr_distance = (te_tr_distance - self.mean_to_scale_test) / (self.sd_to_scale_test)    
+        res=np.dot(te_tr_distance[:,self.fcol_list],self.fweight_list)
+        res=res.reshape(len(res),1)
+        
+        res_with_class=pd.DataFrame({'testclass':test_class_numpy[:,0],'memb':res[:,0]},index=range(len(res)))
+        #clf=DecisionTreeClassifier(max_depth=1)
+        
+        
+        self.test_roc_list=[roc_auc_score(res_with_class.testclass,res_with_class.memb)]
+        
+        #print res_with_class
+        
+        test_predict=self.fclf.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
+        self.test_accuracy_list=[accuracy_score(res_with_class.testclass.values.reshape(len(res_with_class),1), test_predict)]
+        
+        self.weight_record=[self.fweight_list]
+        
+        
+        

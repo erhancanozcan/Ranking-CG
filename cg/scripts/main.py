@@ -42,6 +42,7 @@ Parameters:
                                 dec_lr_exp_smooth
                                 l1_rank
                                 l1_rank_cg
+                                l_inf_rank
                                
                                
                                
@@ -64,6 +65,9 @@ Parameters:
     lr                : controls the magnitude of gradient steps. 
                         In base, it remains constant.
                         In decaying_lr: it increases after each iteration.
+                        In l1_rank, it is the penalty coefficient.
+                        In l1_rank_cg, it is the penalty coefficient.
+                        In l_inf_rank, it is the penalty coefficient.
    
                
    
@@ -75,7 +79,7 @@ Parameters:
 
 
 
-alg_type="dec_lr_exp_smooth"
+alg_type="l_inf_rank"
 stp_perc=0.01
 stp_cond="tr_obj"
 lr=1.0
@@ -106,9 +110,6 @@ method1.run()
 
 
 
-[0.50617284 0.65432099 0.85185185 0.9382716  0.92592593 0.92592593
- 0.9382716  0.95061728 0.95061728 0.95061728 0.95061728 0.95061728
- 0.95061728]
 
 
 
