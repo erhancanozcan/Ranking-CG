@@ -16,13 +16,13 @@ d_name="xor"
 
 
 from cg.scripts.read_available_datasets import selected_data_set
-
+from cg.scripts.algs.init_alg import init_alg
 
 import random
 
 
 
-
+#208- 479 - 447-602-175-165-85-87
 #%%
 df,df_test,test_class,test_data,train_class,train_data=selected_data_set(datasetname=d_name,location=data_location)
 random.seed(3)
@@ -30,7 +30,7 @@ data=train_data.append(test_data)
 class_data=train_class.append(test_class)
 #%%
 
-from cg.scripts.algs.init_alg import init_alg
+#from cg.scripts.algs.init_alg import init_alg
 
 """
 Parameters:
@@ -43,10 +43,13 @@ Parameters:
                                 l1_rank
                                 l1_rank_cg
                                 l_inf_rank
+                                ranking_cg
                                
                                
                                
-    stp_perc          : controls the column generation iterations. Required for all algorithms
+    stp_perc          : controls the column generation iterations. Required for all algorithms.
+                        Please note that this is a critical parameter in raking-cg Experiments.
+                        Please make sure that stp_cond is tr_obj whenever ranking_cg is used.
    
     stp_cond         : the rule stopping cg iterations.
                       Options
@@ -79,7 +82,7 @@ Parameters:
 
 
 
-alg_type="l_inf_rank"
+alg_type="ranking_cg"
 stp_perc=0.01
 stp_cond="tr_obj"
 lr=1.0
@@ -106,7 +109,11 @@ method1.run()
 #learned weights
 #method1.weight_record[-1]
 
+#optimization_time
+#method1.opt_time
+
 #%%
+
 
 
 
