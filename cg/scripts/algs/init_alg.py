@@ -6,13 +6,14 @@ from cg.scripts.algs.l1_rank import l1_rank
 from cg.scripts.algs.l1_rank_cg import l1_rank_cg
 from cg.scripts.algs.l_inf_rank import l_inf_rank
 from cg.scripts.algs.ranking_cg import ranking_cg
+from cg.scripts.algs.ranking_cg_prototype import ranking_cg_prototype
 
 """"Interface to algorithms"""
 
 def init_alg(alg_type,train_data,train_class,test_data,test_class,df,df_test,
                           distance,stopping_condition,
                           stopping_percentage,lr, alpha,
-                          selected_col_index,scale):
+                          selected_col_index,scale,prot_stop_perc=None,max_epoch=None):
     #selected_col_index: the first column that we added manually to initiate CG iterations.
     
     if alg_type == "base":
@@ -65,6 +66,13 @@ def init_alg(alg_type,train_data,train_class,test_data,test_class,df,df_test,
                                   distance=distance,stopping_condition=stopping_condition,
                                   stopping_percentage=stopping_percentage,lr=lr,
                                   selected_col_index=0,scale=scale)
+    elif alg_type == "ranking_cg_prototype":
+        # no smoothing but learning rate is scaled by iteration number.
+        return ranking_cg_prototype(train_data,train_class,test_data,test_class,df,df_test,
+                                  distance=distance,stopping_condition=stopping_condition,
+                                  stopping_percentage=stopping_percentage,lr=lr,
+                                  selected_col_index=0,scale=scale,prot_stop_perc=prot_stop_perc,
+                                  max_epoch=max_epoch)
     else:
         raise NotImplementedError
     

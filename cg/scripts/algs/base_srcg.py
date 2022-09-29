@@ -11,12 +11,12 @@ from sklearn import tree
 import random
 import itertools
 #import tensorflow as tf
-import cvxpy as cp
+#import cvxpy as cp
 from scipy import signal
 import scipy
 from scipy import stats
 from scipy.stats import iqr
-from cvxpy.atoms.pnorm import pnorm
+#from cvxpy.atoms.pnorm import pnorm
 from scipy.spatial import distance_matrix
 import os
 

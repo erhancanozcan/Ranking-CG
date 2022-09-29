@@ -11,16 +11,30 @@ from sklearn import tree
 import random
 import itertools
 #import tensorflow as tf
-import cvxpy as cp
+#import cvxpy as cp
 from scipy import signal
 import scipy
 from scipy import stats
 from scipy.stats import iqr
-from cvxpy.atoms.pnorm import pnorm
+#from cvxpy.atoms.pnorm import pnorm
 from scipy.spatial import distance_matrix
 import os
 
+def calc_pnorm_dist(to_this,from_this,p,dist_type):
+    
+    col_no=to_this.shape[0]
+    row_no=from_this.shape[0]
+    
+    result=np.zeros(row_no*col_no).reshape(row_no,col_no)
+    p=0.5
+    for i in range(col_no):
+        for j in range(row_no):
+            if dist_type=="euclidian":
+                result[j,i]=(sum(abs(from_this[j,:]-to_this[i,:])**2))**0.5
+            elif dist_type =="pnorm":
+                raise NotImplementedError()
 
+    return result
 
 class ranking_cg:
     
@@ -66,15 +80,18 @@ class ranking_cg:
         
         if self.distance=="euclidian":
             self.data_distance=pd.DataFrame(distance_matrix(data_matrix, data_matrix), index=df.index, columns=df.index)
+            self.full_data_distance=calc_pnorm_dist(data_matrix,data_matrix,-1,"euclidian")
         else:
             print("not written")
-        pairs_distance_dif_table=pd.DataFrame(pairs,columns=['pos_sample','neg_sample'])
+        self.pairs_distance_dif_table=pd.DataFrame(pairs,columns=['pos_sample','neg_sample'])
         
         
-        dimension=(len(pairs_distance_dif_table),df.shape[0])
-        pairs_distance_dif_table=pairs_distance_dif_table.values
+        dimension=(len(self.pairs_distance_dif_table),df.shape[0])
+        self.pairs_distance_dif_table=self.pairs_distance_dif_table.values
         self.tmp_dist_city=np.zeros(dimension)
         self.data_distance_numpy=self.data_distance.values
+        tmp_dim=(len(self.pairs_distance_dif_table),len(data_matrix))
+        self.full_tmp_dist=np.zeros(tmp_dim)
         
         self.mean_to_scale_test=np.mean(self.data_distance_numpy,axis=0)
         self.sd_to_scale_test=np.std(self.data_distance_numpy,axis=0)    
@@ -84,10 +101,12 @@ class ranking_cg:
        
         for i in range(len(pairs)):
             #print cntr
-            index_pos=pairs_distance_dif_table[i,0]
-            index_neg=pairs_distance_dif_table[i,1]
+            index_pos=self.pairs_distance_dif_table[i,0]
+            index_neg=self.pairs_distance_dif_table[i,1]
             tmp_dif=self.data_distance_numpy[index_pos,:] - self.data_distance_numpy[index_neg,:]
             self.tmp_dist_city[i,:]=tmp_dif
+            full_tmp_dif=self.full_data_distance[index_pos,:] - self.full_data_distance[index_neg,:]
+            self.full_tmp_dist[i,:]=full_tmp_dif
             
         
         #mean_to_scale_test=np.mean(tmp_dist_city,axis=0)
