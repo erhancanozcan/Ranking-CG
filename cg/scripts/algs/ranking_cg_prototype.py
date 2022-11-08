@@ -81,6 +81,7 @@ class ranking_cg_prototype(ranking_cg):
         #self.pos_data=tf.constant(self.pos_data.astype("float32"))
         #self.neg_data=tf.constant(self.neg_data.astype("float32"))
         self.rng = np.random.default_rng(12345)
+        self.data_distance_numpy=np.expand_dims(self.data_distance_numpy[:,selected_col_index],axis=1)
         
     # #@tf.function
     # def get_loss(self,duals,weights):
@@ -143,6 +144,8 @@ class ranking_cg_prototype(ranking_cg):
         
         weights = tf.Variable(location_of_init_point+self.rng.normal(0,0.1,len(location_of_init_point)), dtype=tf.float32, trainable=True, name="weights")
         stopper=True
+        best=location_of_init_point
+        best_obj=0
         while stopper:
             with tf.GradientTape() as tape:
                 
@@ -158,16 +161,22 @@ class ranking_cg_prototype(ranking_cg):
             prev=self.location_convergence_obj[-2]
             cur=self.location_convergence_obj[-1]
             if abs(cur-prev)/abs(prev) < self.prot_stop_perc or iter_counter==self.max_epoch:
-                print(self.location_convergence_obj)
+                #print(self.location_convergence_obj)
                 stopper=False
             iter_counter+=1
+            if cur < best_obj:
+                best_obj=cur
+                best=weights.numpy()
         end_time=datetime.datetime.now()
-        self.new_point=weights.numpy()
-        #if abs(self.location_convergence_obj[1])<cur:
+        #self.new_point=weights.numpy()
+        #if abs(self.location_convergence_obj[1])<abs(cur):
         #    self.new_point=weights.numpy()
+        #    print("better point is found")
         #else:
         #    self.new_point=location_of_init_point
+        self.new_point=best
         self.opt_time+=(end_time-start_time).seconds
+        print("The best objective is %f:\nThe initial objective is %f:"%(best_obj,self.location_convergence_obj[1]))
         
     def solve_problem_with_new_column(self):
 
@@ -243,7 +252,8 @@ class ranking_cg_prototype(ranking_cg):
     
     
         train_class_numpy=self.train_class.values
-        res_train=np.dot(self.data_distance_numpy[:,self.col_list],self.weight_list)
+        #res_train=np.dot(self.data_distance_numpy[:,self.col_list],self.weight_list)
+        res_train=np.dot(self.data_distance_numpy,self.weight_list)
         res_train=res_train.reshape(len(res_train),1)
         
         res_with_class=pd.DataFrame({'trainclass':train_class_numpy[:,0],'memb':res_train[:,0]},index=range(len(res_train)))
