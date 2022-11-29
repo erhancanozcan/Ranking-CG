@@ -7,7 +7,7 @@ from gurobipy import *
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import roc_auc_score
 from sklearn.tree import DecisionTreeClassifier
-from sklearn import tree
+from sklearn import tree,svm
 import random
 import itertools
 #import tensorflow as tf
@@ -217,7 +217,7 @@ class ranking_cg_prototype(ranking_cg):
         
         self.m.update()
         #self.m.write('/Users/can/Desktop/columngeneration/svm_second.lp')
-        self.m.Params.Method=1
+        self.m.Params.Method=1#1
         start_time=datetime.datetime.now()
         self.m.optimize()
         end_time=datetime.datetime.now()
@@ -258,7 +258,8 @@ class ranking_cg_prototype(ranking_cg):
         
         res_with_class=pd.DataFrame({'trainclass':train_class_numpy[:,0],'memb':res_train[:,0]},index=range(len(res_train)))
          #accuracy
-        self.clf=tree.DecisionTreeClassifier(max_depth=1)
+        #self.clf=tree.DecisionTreeClassifier(max_depth=1)
+        self.clf=svm.LinearSVC(class_weight="balanced")
         self.clf.fit(res_with_class.memb.values.reshape(len(res_with_class),1),res_with_class.trainclass.values.reshape(len(res_with_class),1))
         train_predict=self.clf.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
         train_accuracy=accuracy_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
@@ -329,9 +330,10 @@ class ranking_cg_prototype(ranking_cg):
      
      
      self.counter=self.counter+1
+     self.test_predictions=test_predict
 
     
-    def run(self):
+    def run(self,plot=False,name=None):
         
         # #self.lr=self.lr_init
         # def _loss(duals,weights):
@@ -350,7 +352,7 @@ class ranking_cg_prototype(ranking_cg):
         self.predict_test_data()
         
         stopper=True
-        #i=0
+        i=2
         while stopper:
             tf.keras.backend.clear_session()
             self.model_optimizer = tf.keras.optimizers.Adam(
@@ -359,6 +361,18 @@ class ranking_cg_prototype(ranking_cg):
             #self.schedule_lr()
             self.solve_problem_with_new_column()
             self.predict_test_data()
+            if plot==True:
+                import matplotlib.pyplot as plt
+                fig, ax = plt.subplots()
+                ax.scatter(x=self.df_test.f0, y=self.df_test.f1, c=self.test_predictions,alpha=0.01)
+                ax.scatter(x=self.df.f0, y=self.df.f1, c=self.df['class'])
+                #prototypes
+                prot_loc=np.concatenate([np.expand_dims(m,axis=0) for m in self.focused_point_list])
+                ax.scatter(x=prot_loc[:,0],y=prot_loc[:,1],c='red')
+                #fig
+                address="/Users/can/Desktop/ranking_cg_extension/plots/"
+                fig.savefig(address+name+str(i)+".png")
+                i+=1
             stopper=self.stopping_criteria()
         
 

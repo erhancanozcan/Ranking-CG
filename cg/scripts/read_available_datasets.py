@@ -487,6 +487,892 @@ def selected_data_set(datasetname,location):
         
         return df,df_test,test_class,test_data,train_class,train_data
     
+    elif datasetname=="ellipsoid":
+        
+        x=np.arange(-8**0.5+0.001,+8**0.5,0.01)
+
+        y_pos=(2-((x**2)/4))**0.5
+        y_neg=-(2-((x**2)/4))**0.5
+
+
+        #x=np.expand_dims(x, 1)
+
+
+        rng = np.random.default_rng(12345)
+
+
+        pos=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        pos=np.expand_dims(pos, 1)
+
+
+        pos_two=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+
+        pos_three=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_three, 1)],axis=1)
+
+        pos_four=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_four, 1)],axis=1)
+
+        pos_five=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_five, 1)],axis=1)
+
+        pos_six=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_six, 1)],axis=1)
+
+
+
+        selected_col=rng.integers(6,size=len(x))
+        pos=pos[np.arange(len(x)),selected_col]
+        pos=np.expand_dims(pos, 1)
+
+        pos=np.concatenate([np.expand_dims(x, 1),pos],axis=1)
+
+
+
+
+        #neg
+        neg=rng.uniform(np.repeat(-8**0.5,len(x)),y_neg,len(x))
+        neg=np.expand_dims(neg, 1)
+
+
+        neg_two=rng.uniform(np.repeat(-8**0.5,len(x)),y_neg,len(x))
+        neg=np.concatenate([neg,np.expand_dims(neg_two, 1)],axis=1)
+
+
+        neg_three=rng.uniform(np.repeat(-8**0.5,len(x)),y_neg,len(x))
+        neg=np.concatenate([neg,np.expand_dims(neg_three, 1)],axis=1)
+
+        neg_four=rng.uniform(np.repeat(-8**0.5,len(x)),y_neg,len(x))
+        neg=np.concatenate([neg,np.expand_dims(neg_four, 1)],axis=1)
+
+        neg_five=rng.uniform(np.repeat(-8**0.5,len(x)),y_neg,len(x))
+        neg=np.concatenate([neg,np.expand_dims(neg_five, 1)],axis=1)
+
+        neg_six=rng.uniform(np.repeat(-8**0.5,len(x)),y_neg,len(x))
+        neg=np.concatenate([neg,np.expand_dims(neg_six, 1)],axis=1)
+
+
+
+        selected_col=rng.integers(6,size=len(x))
+        neg=neg[np.arange(len(x)),selected_col]
+        neg=np.expand_dims(neg, 1)
+
+        neg=np.concatenate([np.expand_dims(x, 1),neg],axis=1)
+
+        data=np.concatenate([pos,neg],axis=0)
+        
+        
+        data=pd.DataFrame(data,columns=['f0','f1'])
+        data=data.drop(data.sample(frac=.75,random_state=10).index)
+        data['class']=1
+
+        #negative data points
+        data_neg=np.array([[0,1.1],
+                           [-1.9,1.01],
+                           [-2.2,-0.9],
+                           [-2.5,0.3],
+                           [-0.1,-1.2],
+                           [1.5,-0.2],
+                           [1.75,0.3],
+                           [2.2,-0.9],
+                           [2.4,0.5],
+                           [0.6,1.1],])
+        data_neg=pd.DataFrame(data_neg,columns=['f0','f1'])
+        data_neg['class']=-1
+
+        data = pd.concat([data, data_neg], axis=0)
+
+
+        #outlier data points
+        data_out=np.array([[0,0.9],
+                           [-2,0.75],
+                           [-1.5,-0.5],
+                           [2.5,0.3],
+                           [0.1,-1.2]])
+        data_out=pd.DataFrame(data_out,columns=['f0','f1'])
+        data_out['class']=1
+
+        data = pd.concat([data, data_out], axis=0)
+        
+        row_names=[]
+        for i in range(len(data)):
+            row_names.append( "p" + str(i))
+            
+        data.index=row_names
+        
+        
+        class_data=data[['class']]
+        data=data.drop(['class'], axis=1)
+        
+        data_norm=data
+        
+        from sklearn.model_selection import train_test_split
+        train_data, test_data, train_class, test_class = train_test_split(data_norm, class_data, test_size = 0.001, random_state = 2)
+        df=pd.concat([train_data, train_class], axis=1)
+        #unused_data, test_data, unused_class, test_class = train_test_split(test_data, test_class, test_size = 0.05, random_state = 5)
+        
+        
+        
+        #test data generation to shade the region.
+        test_x=np.arange(-3+0.001,+3,0.05)
+        test_y=np.arange(-3+0.001,+3,0.05)
+        
+        test_x=np.linspace(-3, 3, 120)
+        test_y=np.linspace(-3, 3, 120)
+        
+        
+        test_data=np.array(np.meshgrid(test_x, test_y)).T.reshape(-1,2)
+        test_data=pd.DataFrame(test_data,columns=['f0','f1'])
+        test_data['class']=1
+        test_data.iat[0,2]=-1
+        test_data.iat[10,2]=-1
+        
+        df_test=test_data
+        
+        test_class=df_test[['class']]
+        test_data=df_test.drop(['class'], axis=1)
+        
+        #df_test=pd.concat([test_data,test_class],axis=1)
+        #del class_data,col_names,col_no,data,data_norm,i,row_names
+        
+        return df,df_test,test_class,test_data,train_class,train_data
+        
+
+    elif datasetname=="two_ellipsoid":
+        
+        x=np.arange(-8**0.5+0.001,+8**0.5,0.01)
+
+        y_pos=(2-((x**2)/4))**0.5
+        y_neg=-(2-((x**2)/4))**0.5
+
+
+        #x=np.expand_dims(x, 1)
+
+
+        rng = np.random.default_rng(12345)
+
+
+        pos=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        pos=np.expand_dims(pos, 1)
+
+
+        pos_two=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+
+        pos_three=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_three, 1)],axis=1)
+
+        pos_four=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_four, 1)],axis=1)
+
+        pos_five=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_five, 1)],axis=1)
+
+        pos_six=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_six, 1)],axis=1)
+
+
+
+        selected_col=rng.integers(6,size=len(x))
+        pos=pos[np.arange(len(x)),selected_col]
+        pos=np.expand_dims(pos, 1)
+
+        pos=np.concatenate([np.expand_dims(x, 1),pos],axis=1)
+
+
+
+
+        #neg
+        neg=rng.uniform(np.repeat(-8**0.5,len(x)),y_neg,len(x))
+        neg=np.expand_dims(neg, 1)
+
+
+        neg_two=rng.uniform(np.repeat(-8**0.5,len(x)),y_neg,len(x))
+        neg=np.concatenate([neg,np.expand_dims(neg_two, 1)],axis=1)
+
+
+        neg_three=rng.uniform(np.repeat(-8**0.5,len(x)),y_neg,len(x))
+        neg=np.concatenate([neg,np.expand_dims(neg_three, 1)],axis=1)
+
+        neg_four=rng.uniform(np.repeat(-8**0.5,len(x)),y_neg,len(x))
+        neg=np.concatenate([neg,np.expand_dims(neg_four, 1)],axis=1)
+
+        neg_five=rng.uniform(np.repeat(-8**0.5,len(x)),y_neg,len(x))
+        neg=np.concatenate([neg,np.expand_dims(neg_five, 1)],axis=1)
+
+        neg_six=rng.uniform(np.repeat(-8**0.5,len(x)),y_neg,len(x))
+        neg=np.concatenate([neg,np.expand_dims(neg_six, 1)],axis=1)
+
+
+
+        selected_col=rng.integers(6,size=len(x))
+        neg=neg[np.arange(len(x)),selected_col]
+        neg=np.expand_dims(neg, 1)
+
+        neg=np.concatenate([np.expand_dims(x, 1),neg],axis=1)
+
+        data=np.concatenate([pos,neg],axis=0)
+        #generate second ellipse
+        import copy
+        shift_data=copy.deepcopy(data)
+        shift_data[:,0]=shift_data[:,0]+rng.uniform(7.98,8.02,len(data))
+
+        data=np.concatenate([data,shift_data],axis=0)
+
+
+
+        fill_x=np.arange(3,5,0.2)
+        fill_y=np.arange(-2.75,2.75,0.2)
+
+        tmp_fill_data=np.array(np.meshgrid(fill_x,fill_y)).T.reshape(-1,2)
+        tmp_fill_data=tmp_fill_data+ (rng.uniform(-0.01,+0.01,560)).reshape(280,2)
+
+
+        data=np.concatenate([data,tmp_fill_data],axis=0)
+        #end
+        
+        data=pd.DataFrame(data,columns=['f0','f1'])
+        data=data.drop(data.sample(frac=.75,random_state=10).index)
+        data['class']=1
+
+        #negative data points
+        data_neg=np.array([[0,1.1],
+                           [-1.9,1.01],
+                           [-2.2,-0.9],
+                           [-2.5,0.3],
+                           [-0.1,-1.2],
+                           [1.5,-0.2],
+                           [1.75,0.3],
+                           [2.2,-0.9],
+                           [2.4,0.5],
+                           [0.6,1.1],
+                           [0,1.1],
+                            [-1.8+8,1.04],
+                            [-2.1+8,-0.94],
+                            [-2.3+8,0.31],
+                            [-0.1+8,-1.22],
+                            [1.5+8,-0.26],
+                            [1.95+8,0.33],
+                            [2.1+8,-0.94],
+                            [2.5+8,0.52],
+                            [0.5+8,1.17]])
+        data_neg=pd.DataFrame(data_neg,columns=['f0','f1'])
+        data_neg['class']=-1
+
+        data = pd.concat([data, data_neg], axis=0)
+
+
+        #outlier data points
+        data_out=np.array([[0,0.9],
+                           [-2,0.75],
+                           [-1.5,-0.5],
+                           [2.5,0.3],
+                           [0.1,-1.2]])
+        data_out=pd.DataFrame(data_out,columns=['f0','f1'])
+        data_out['class']=1
+
+        data = pd.concat([data, data_out], axis=0)
+        
+        row_names=[]
+        for i in range(len(data)):
+            row_names.append( "p" + str(i))
+            
+        data.index=row_names
+        
+        
+        class_data=data[['class']]
+        data=data.drop(['class'], axis=1)
+        
+        data_norm=data
+        
+        from sklearn.model_selection import train_test_split
+        train_data, test_data, train_class, test_class = train_test_split(data_norm, class_data, test_size = 0.001, random_state = 2)
+        df=pd.concat([train_data, train_class], axis=1)
+        #unused_data, test_data, unused_class, test_class = train_test_split(test_data, test_class, test_size = 0.05, random_state = 5)
+        
+        
+        
+        #test data generation to shade the region.
+        test_x=np.arange(-3+0.001,+3,0.05)
+        test_y=np.arange(-3+0.001,+3,0.05)
+        
+        test_x=np.linspace(-3, 13, 320)
+        test_y=np.linspace(-3, 3, 120)
+        
+        
+        test_data=np.array(np.meshgrid(test_x, test_y)).T.reshape(-1,2)
+        test_data=pd.DataFrame(test_data,columns=['f0','f1'])
+        test_data['class']=1
+        test_data.iat[0,2]=-1
+        test_data.iat[10,2]=-1
+        
+        df_test=test_data
+        
+        test_class=df_test[['class']]
+        test_data=df_test.drop(['class'], axis=1)
+        
+        #df_test=pd.concat([test_data,test_class],axis=1)
+        #del class_data,col_names,col_no,data,data_norm,i,row_names
+        
+        return df,df_test,test_class,test_data,train_class,train_data        
+        
+
+    elif datasetname=="parabol":
+        
+        x=np.arange(-8**0.5+0.001,+8**0.5,0.01)
+
+        y_pos=((x**2)/1)
+        y_neg=((x**2)/1)
+
+
+        #x=np.expand_dims(x, 1)
+
+
+        rng = np.random.default_rng(12345)
+
+
+        #pos=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.expand_dims(pos, 1)
+
+        pos=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.expand_dims(pos, 1)
+
+        #pos_two=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+
+
+        #pos_three=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_three, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+        #pos_four=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_four, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+        #pos_five=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_five, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+        #pos_six=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_six, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+
+
+        selected_col=rng.integers(6,size=len(x))
+        pos=pos[np.arange(len(x)),selected_col]
+        pos=np.expand_dims(pos, 1)
+
+        pos=np.concatenate([np.expand_dims(x, 1),pos],axis=1)
+        pos=np.concatenate([pos,np.expand_dims(np.repeat(1,len(pos)), 1)],axis=1)
+        
+        
+        
+        
+        x=np.arange(-4**0.5+0.001,+4**0.5,0.05)
+        y_neg=((x**2)/1)
+        
+        neg=rng.uniform(y_neg+5,y_neg+6,len(x))
+        neg=np.expand_dims(neg, 1)
+        neg=np.concatenate([np.expand_dims(x, 1),neg],axis=1)
+        neg=np.concatenate([neg,np.expand_dims(np.repeat(-1,len(neg)), 1)],axis=1)
+        
+        
+        data=np.concatenate([pos,neg],axis=0)
+        
+        #plt.scatter(x=data[:,0],y=data[:,1])
+
+        
+
+
+        #####here
+        data=pd.DataFrame(data,columns=['f0','f1','class'])
+        data=data.drop(data.sample(frac=.5,random_state=10).index)
+        data.loc[626]['f0']=data.loc[626]['f0'] - 0.1
+        data.loc[626]['f1']=data.loc[626]['f1'] + 0.4
+        data.loc[626]['class']=1
+        
+        data.loc[579]['class']=1
+        data=data.drop(index=(579))
+        
+        data.loc[582]['f0']=data.loc[582]['f0'] + 0.1
+        data.loc[582]['f1']=data.loc[582]['f1'] + 0.7
+        data.loc[582]['class']=1
+        #plt.scatter(x=data.f0,y=data.f1,c=data[['class']].values[:,0])
+        #data['class']=1
+
+        #outlier data points
+        data_neg=np.array([[0,6],
+                           [-1.1,8.01],
+                           [2.2,8.0],
+                           [-2,10.3],
+                           [1.5,9]])
+        data_neg=pd.DataFrame(data_neg,columns=['f0','f1'])
+        data_neg['class']=1
+
+        data = pd.concat([data, data_neg], axis=0)
+        #plt.scatter(x=data.f0,y=data.f1,c=data[['class']].values[:,0])
+
+        
+        row_names=[]
+        for i in range(len(data)):
+            row_names.append( "p" + str(i))
+            
+        data.index=row_names
+        
+        
+        class_data=data[['class']]
+        data=data.drop(['class'], axis=1)
+        
+        data_norm=data
+        
+        from sklearn.model_selection import train_test_split
+        train_data, test_data, train_class, test_class = train_test_split(data_norm, class_data, test_size = 0.001, random_state = 2)
+        df=pd.concat([train_data, train_class], axis=1)
+        #unused_data, test_data, unused_class, test_class = train_test_split(test_data, test_class, test_size = 0.05, random_state = 5)
+        
+        
+        
+        #test data generation to shade the region.
+        test_x=np.arange(-3+0.001,+3,0.05)
+        test_y=np.arange(-3+0.001,+3,0.05)
+        
+        test_x=np.linspace(-3, 3, 120)
+        test_y=np.linspace(0, 11, 220)
+        
+        
+        test_data=np.array(np.meshgrid(test_x, test_y)).T.reshape(-1,2)
+        test_data=pd.DataFrame(test_data,columns=['f0','f1'])
+        test_data['class']=1
+        test_data.iat[0,2]=-1
+        test_data.iat[10,2]=-1
+        
+        df_test=test_data
+        
+        test_class=df_test[['class']]
+        test_data=df_test.drop(['class'], axis=1)
+        
+        #df_test=pd.concat([test_data,test_class],axis=1)
+        #del class_data,col_names,col_no,data,data_norm,i,row_names
+        
+        return df,df_test,test_class,test_data,train_class,train_data 
+    
+    
+
+    elif datasetname=="parabol_2":
+        
+        x=np.arange(-8**0.5+0.001,+8**0.5,0.01)
+
+        y_pos=((x**2)/1)
+        y_neg=((x**2)/1)
+
+
+        #x=np.expand_dims(x, 1)
+
+
+        rng = np.random.default_rng(12345)
+
+
+        #pos=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.expand_dims(pos, 1)
+
+        pos=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.expand_dims(pos, 1)
+
+        #pos_two=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+
+
+        #pos_three=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_three, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+        #pos_four=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_four, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+        #pos_five=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_five, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+        #pos_six=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_six, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+
+
+        selected_col=rng.integers(6,size=len(x))
+        pos=pos[np.arange(len(x)),selected_col]
+        pos=np.expand_dims(pos, 1)
+
+        pos=np.concatenate([np.expand_dims(x, 1),pos],axis=1)
+        pos=np.concatenate([pos,np.expand_dims(np.repeat(1,len(pos)), 1)],axis=1)
+        
+        
+        
+        
+        x=np.arange(-4**0.5+0.001,+4**0.5,0.05)
+        y_neg=((x**2)/1)
+        
+        neg=rng.uniform(y_neg+5,y_neg+6,len(x))
+        neg=np.expand_dims(neg, 1)
+        neg=np.concatenate([np.expand_dims(x, 1),neg],axis=1)
+        neg=np.concatenate([neg,np.expand_dims(np.repeat(-1,len(neg)), 1)],axis=1)
+        
+        
+        data=np.concatenate([pos,neg],axis=0)
+        
+        #plt.scatter(x=data[:,0],y=data[:,1])
+
+        
+
+
+        #####here
+        data=pd.DataFrame(data,columns=['f0','f1','class'])
+        data=data.drop(data.sample(frac=.5,random_state=10).index)
+        data.loc[626]['f0']=data.loc[626]['f0'] - 0.1
+        data.loc[626]['f1']=data.loc[626]['f1'] + 0.4
+        data.loc[626]['class']=1
+        
+        data.loc[579]['class']=1
+        data=data.drop(index=(579))
+        
+        data.loc[582]['f0']=data.loc[582]['f0'] + 0.1
+        data.loc[582]['f1']=data.loc[582]['f1'] + 0.7
+        data.loc[582]['class']=1
+        #plt.scatter(x=data.f0,y=data.f1,c=data[['class']].values[:,0])
+        #data['class']=1
+
+        #outlier data points
+        data_neg=np.array([[0,6],
+                           [-1.1,8.01],
+                           [2.2,8.0],
+                           [1.5,9]])
+        data_neg=pd.DataFrame(data_neg,columns=['f0','f1'])
+        data_neg['class']=1
+
+        data = pd.concat([data, data_neg], axis=0)
+        
+        data_neg=np.array([[0,8]])
+        data_neg=pd.DataFrame(data_neg,columns=['f0','f1'])
+        data_neg['class']=-1
+
+        data = pd.concat([data, data_neg], axis=0)
+        #plt.scatter(x=data.f0,y=data.f1,c=data[['class']].values[:,0])
+
+        
+        row_names=[]
+        for i in range(len(data)):
+            row_names.append( "p" + str(i))
+            
+        data.index=row_names
+        
+        
+        class_data=data[['class']]
+        data=data.drop(['class'], axis=1)
+        
+        data_norm=data
+        
+        from sklearn.model_selection import train_test_split
+        train_data, test_data, train_class, test_class = train_test_split(data_norm, class_data, test_size = 0.001, random_state = 2)
+        df=pd.concat([train_data, train_class], axis=1)
+        #unused_data, test_data, unused_class, test_class = train_test_split(test_data, test_class, test_size = 0.05, random_state = 5)
+        
+        
+        
+        #test data generation to shade the region.
+        test_x=np.arange(-3+0.001,+3,0.05)
+        test_y=np.arange(-3+0.001,+3,0.05)
+        
+        test_x=np.linspace(-3, 3, 120)
+        test_y=np.linspace(0, 11, 220)
+        
+        
+        test_data=np.array(np.meshgrid(test_x, test_y)).T.reshape(-1,2)
+        test_data=pd.DataFrame(test_data,columns=['f0','f1'])
+        test_data['class']=1
+        test_data.iat[0,2]=-1
+        test_data.iat[10,2]=-1
+        
+        df_test=test_data
+        
+        test_class=df_test[['class']]
+        test_data=df_test.drop(['class'], axis=1)
+        
+        #df_test=pd.concat([test_data,test_class],axis=1)
+        #del class_data,col_names,col_no,data,data_norm,i,row_names
+        
+        return df,df_test,test_class,test_data,train_class,train_data 
+    
+    
+
+    elif datasetname=="parabol_3":
+        
+        x=np.arange(-8**0.5+0.001,+8**0.5,0.01)
+
+        y_pos=((x**2)/1)
+        y_neg=((x**2)/1)
+
+
+        #x=np.expand_dims(x, 1)
+
+
+        rng = np.random.default_rng(12345)
+
+
+        #pos=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.expand_dims(pos, 1)
+
+        pos=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.expand_dims(pos, 1)
+
+        #pos_two=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+
+
+        #pos_three=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_three, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+        #pos_four=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_four, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+        #pos_five=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_five, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+        #pos_six=rng.uniform(y_pos,np.repeat(8**0.5,len(x)),len(x))
+        #pos=np.concatenate([pos,np.expand_dims(pos_six, 1)],axis=1)
+        
+        pos_two=rng.uniform(y_pos+1,y_pos+3,len(x))
+        pos=np.concatenate([pos,np.expand_dims(pos_two, 1)],axis=1)
+
+
+
+        selected_col=rng.integers(6,size=len(x))
+        pos=pos[np.arange(len(x)),selected_col]
+        pos=np.expand_dims(pos, 1)
+
+        pos=np.concatenate([np.expand_dims(x, 1),pos],axis=1)
+        pos=np.concatenate([pos,np.expand_dims(np.repeat(1,len(pos)), 1)],axis=1)
+        
+        
+        
+        
+        x=np.arange(-4**0.5+0.001,+4**0.5,0.05)
+        y_neg=((x**2)/1)
+        
+        neg=rng.uniform(y_neg+5,y_neg+6,len(x))
+        neg=np.expand_dims(neg, 1)
+        neg=np.concatenate([np.expand_dims(x, 1),neg],axis=1)
+        neg=np.concatenate([neg,np.expand_dims(np.repeat(-1,len(neg)), 1)],axis=1)
+        
+        
+        data=np.concatenate([pos,neg],axis=0)
+        
+        #plt.scatter(x=data[:,0],y=data[:,1])
+
+        
+
+
+        #####here
+        data=pd.DataFrame(data,columns=['f0','f1','class'])
+        data=data.drop(data.sample(frac=.5,random_state=10).index)
+        data.loc[626]['f0']=data.loc[626]['f0'] - 0.1
+        data.loc[626]['f1']=data.loc[626]['f1'] + 0.4
+        data.loc[626]['class']=1
+        
+        data.loc[579]['class']=1
+        data=data.drop(index=(579))
+        
+        data.loc[582]['f0']=data.loc[582]['f0'] + 0.1
+        data.loc[582]['f1']=data.loc[582]['f1'] + 0.7
+        data.loc[582]['class']=1
+        #plt.scatter(x=data.f0,y=data.f1,c=data[['class']].values[:,0])
+        #data['class']=1
+
+        #outlier data points
+        data_neg=np.array([[0,6],
+                           [-1.1,8.01],
+                           [2.2,8.0],
+                           [1.5,9]])
+        data_neg=pd.DataFrame(data_neg,columns=['f0','f1'])
+        data_neg['class']=1
+
+        data = pd.concat([data, data_neg], axis=0)
+        
+        #data_neg=np.array([[0,8]])
+        #data_neg=pd.DataFrame(data_neg,columns=['f0','f1'])
+        #data_neg['class']=-1
+
+        #data = pd.concat([data, data_neg], axis=0)
+        #plt.scatter(x=data.f0,y=data.f1,c=data[['class']].values[:,0])
+
+        
+        row_names=[]
+        for i in range(len(data)):
+            row_names.append( "p" + str(i))
+            
+        data.index=row_names
+        
+        
+        class_data=data[['class']]
+        data=data.drop(['class'], axis=1)
+        
+        data_norm=data
+        
+        from sklearn.model_selection import train_test_split
+        train_data, test_data, train_class, test_class = train_test_split(data_norm, class_data, test_size = 0.001, random_state = 2)
+        df=pd.concat([train_data, train_class], axis=1)
+        #unused_data, test_data, unused_class, test_class = train_test_split(test_data, test_class, test_size = 0.05, random_state = 5)
+        
+        
+        
+        #test data generation to shade the region.
+        test_x=np.arange(-3+0.001,+3,0.05)
+        test_y=np.arange(-3+0.001,+3,0.05)
+        
+        test_x=np.linspace(-3, 3, 120)
+        test_y=np.linspace(0, 11, 220)
+        
+        
+        test_data=np.array(np.meshgrid(test_x, test_y)).T.reshape(-1,2)
+        test_data=pd.DataFrame(test_data,columns=['f0','f1'])
+        test_data['class']=1
+        test_data.iat[0,2]=-1
+        test_data.iat[10,2]=-1
+        
+        df_test=test_data
+        
+        test_class=df_test[['class']]
+        test_data=df_test.drop(['class'], axis=1)
+        
+        #df_test=pd.concat([test_data,test_class],axis=1)
+        #del class_data,col_names,col_no,data,data_norm,i,row_names
+        
+        return df,df_test,test_class,test_data,train_class,train_data 
+
+
+    elif datasetname=="rectangle":
+        
+        
+        
+        
+        rng = np.random.default_rng(12345)
+        
+        #x=np.arange(-8**0.5+0.001,+8**0.5,0.01)
+        
+        x=rng.uniform(-2,2,100)
+        y=rng.uniform(0,1,100)
+        
+        data=np.concatenate([np.expand_dims(x, 1),np.expand_dims(y, 1)],axis=1)
+        data=np.concatenate([data,np.expand_dims(np.repeat(1,len(data)), 1)],axis=1)
+        
+        data=pd.DataFrame(data,columns=['f0','f1','class'])
+        
+        
+        data_neg=np.array([[-1.75,-1.5],
+                           [-1.5,-0.8],
+                           [-1.25,-1.25],
+                           [-1.25,-1.4],
+                           [-1.25,-1.6],
+                           [-1.1,-1.25],
+                           [0,-1.45],
+                           [0.75,-1.25],
+                           [1,-1],
+                           [1.5,-1.2],
+                           [1.6,-1.5]])
+        data_neg=pd.DataFrame(data_neg,columns=['f0','f1'])
+        data_neg['class']=-1
+
+        data = pd.concat([data, data_neg], axis=0)
+
+        #plt.scatter(x=data.f0,y=data.f1,c=data[['class']].values[:,0])
+        
+
+        
+        row_names=[]
+        for i in range(len(data)):
+            row_names.append( "p" + str(i))
+            
+        data.index=row_names
+        
+        
+        class_data=data[['class']]
+        data=data.drop(['class'], axis=1)
+        
+        data_norm=data
+        
+        from sklearn.model_selection import train_test_split
+        train_data, test_data, train_class, test_class = train_test_split(data_norm, class_data, test_size = 0.001, random_state = 2)
+        df=pd.concat([train_data, train_class], axis=1)
+        #unused_data, test_data, unused_class, test_class = train_test_split(test_data, test_class, test_size = 0.05, random_state = 5)
+        
+        
+        
+        #test data generation to shade the region.
+        test_x=np.arange(-2+0.001,+2,0.025)
+        test_y=np.arange(-1.75+0.001,+1,0.025)
+        
+        #test_x=np.linspace(-3, 3, 120)
+        #test_y=np.linspace(0, 11, 220)
+        
+        
+        test_data=np.array(np.meshgrid(test_x, test_y)).T.reshape(-1,2)
+        test_data=pd.DataFrame(test_data,columns=['f0','f1'])
+        test_data['class']=1
+        test_data.iat[0,2]=-1
+        test_data.iat[10,2]=-1
+        
+        df_test=test_data
+        
+        test_class=df_test[['class']]
+        test_data=df_test.drop(['class'], axis=1)
+        
+        #df_test=pd.concat([test_data,test_class],axis=1)
+        #del class_data,col_names,col_no,data,data_norm,i,row_names
+        
+        return df,df_test,test_class,test_data,train_class,train_data          
+    
+    
     else:
         print("Wrong dataset name. Please write one of the followings: xor,monks1,cleveland_heart,parkinsons,cancer_wbc,sonar,spectf,survival_scaled,ionosphere, or votes.")
         return None,None,None,None,None,None

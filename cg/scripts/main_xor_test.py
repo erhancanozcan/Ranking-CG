@@ -8,7 +8,7 @@ sys.path.append(folder_location)
 
 
 #dataset name
-d_name="xor"
+d_name="parabol_3"
 
 #folder_location=folder_location+"/github_column_generation"
 #data_location=folder_location+"/data"
@@ -39,20 +39,26 @@ import random
 #208- 479 - 447-602-175-165-85-87
 #%%
 df,df_test,test_class,test_data,train_class,train_data=selected_data_set(datasetname=d_name,location=data_location)
+
+#df=df.sort_values('class')
+#train_class=train_class.loc[df.index]
+#train_data=train_data.loc[df.index]
+
+
 random.seed(3)
 data=train_data.append(test_data)           
 class_data=train_class.append(test_class)
 
 #%%
-random.seed(10)
-df=df.drop(df.loc[(df['class']==-1),].sample(frac=.87,random_state=10).index)
+#random.seed(10)
+#df=df.drop(df.loc[(df['class']==-1),].sample(frac=.87,random_state=10).index)
 
 
 import matplotlib.pyplot as plt
 plt.scatter(x=df.f0,y=df.f1,c=df['class'])
 
-train_data=df[['f0','f1']]
-train_class=df[['class']]
+#train_data=df[['f0','f1']]
+#train_class=df[['class']]
 
 
 #%%
@@ -72,6 +78,7 @@ Parameters:
                                 l_inf_rank
                                 ranking_cg
                                 ranking_cg_prototype
+                                full_rank
                                
                                
                                
@@ -118,7 +125,7 @@ Parameters:
 
 
 
-alg_type="ranking_cg_prototype"
+alg_type="ranking_cg"
 stp_perc=0.01
 stp_cond="tr_obj"
 lr=1.0
@@ -133,7 +140,7 @@ method1=init_alg(alg_type,train_data,train_class,test_data,test_class,df,df_test
                           selected_col_index=0,scale=True,prot_stop_perc=prot_stop_perc,
                           max_epoch=max_epoch)
 
-method1.run()
+method1.run(plot=True,name="parabol_3_ranking_cg_w_ref_svc_")
 
 #All the statistics that we want to check.
 #print(method1.test_roc_list)
@@ -156,11 +163,12 @@ method1.run()
 
 #%%
 
+#plot the focused points
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-prot_loc=np.concatenate([np.expand_dims(m,axis=0) for m in method1.focused_point_list])
+prot_loc=np.concatenate([np.expand_dims(m,axis=0) for m in method1.focused_point_list[:11]])
 #prot_loc=prot_loc[:-3,:]
 
 
@@ -172,9 +180,19 @@ ax.scatter(x=prot_loc[:,0],y=prot_loc[:,1],c='red')
 #ax.set_ylim([-1,1.4])
 fig
 
+#%%
+
+#plot the decision boundaries.
+
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 
+fig, ax = plt.subplots()
 
-
+ax.scatter(x=df_test.f0, y=df_test.f1, c=method1.test_predictions,alpha=0.05)
+ax.scatter(x=df.f0, y=df.f1, c=df['class'])
+#ax.scatter(x=prot_loc[:,0],y=prot_loc[:,1],c='red')
+fig
 

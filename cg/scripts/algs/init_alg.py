@@ -3,6 +3,7 @@ from cg.scripts.algs.srcg_decayinglr import srcg_decayinglr
 from cg.scripts.algs.srcg_exp_smooth import srcg_exp_smooth
 from cg.scripts.algs.srcg_dec_lr_exp_smooth import srcg_dec_lr_exp_smooth
 from cg.scripts.algs.l1_rank import l1_rank
+from cg.scripts.algs.full_rank import full_rank
 from cg.scripts.algs.l1_rank_cg import l1_rank_cg
 from cg.scripts.algs.l_inf_rank import l_inf_rank
 from cg.scripts.algs.ranking_cg import ranking_cg
@@ -65,14 +66,20 @@ def init_alg(alg_type,train_data,train_class,test_data,test_class,df,df_test,
         return ranking_cg(train_data,train_class,test_data,test_class,df,df_test,
                                   distance=distance,stopping_condition=stopping_condition,
                                   stopping_percentage=stopping_percentage,lr=lr,
-                                  selected_col_index=0,scale=scale)
+                                  selected_col_index=selected_col_index,scale=scale)
     elif alg_type == "ranking_cg_prototype":
         # no smoothing but learning rate is scaled by iteration number.
         return ranking_cg_prototype(train_data,train_class,test_data,test_class,df,df_test,
                                   distance=distance,stopping_condition=stopping_condition,
                                   stopping_percentage=stopping_percentage,lr=lr,
-                                  selected_col_index=0,scale=scale,prot_stop_perc=prot_stop_perc,
+                                  selected_col_index=selected_col_index,scale=scale,prot_stop_perc=prot_stop_perc,
                                   max_epoch=max_epoch)
+    elif alg_type == "full_rank":
+        # no smoothing but learning rate is scaled by iteration number.
+        return full_rank(train_data,train_class,test_data,test_class,df,df_test,
+                                  distance=distance,stopping_condition=stopping_condition,
+                                  stopping_percentage=stopping_percentage,lr=lr,
+                                  selected_col_index=0,scale=scale)
     else:
         raise NotImplementedError
     
