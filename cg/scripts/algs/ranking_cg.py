@@ -19,6 +19,12 @@ from scipy.stats import iqr
 #from cvxpy.atoms.pnorm import pnorm
 from scipy.spatial import distance_matrix
 import os
+from imblearn.metrics import sensitivity_score
+from imblearn.metrics import specificity_score
+from imblearn.metrics import geometric_mean_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import f1_score
+
 
 def calc_pnorm_dist(to_this,from_this,p,dist_type):
     
@@ -215,8 +221,8 @@ class ranking_cg:
         
         res_with_class=pd.DataFrame({'trainclass':train_class_numpy[:,0],'memb':res_train[:,0]},index=range(len(res_train)))
         #accuracy
-        #self.clf=tree.DecisionTreeClassifier(max_depth=1)
-        self.clf=svm.LinearSVC(class_weight="balanced")
+        self.clf=tree.DecisionTreeClassifier(max_depth=1)
+        #self.clf=svm.LinearSVC(class_weight="balanced")
         self.clf.fit(res_with_class.memb.values.reshape(len(res_with_class),1),res_with_class.trainclass.values.reshape(len(res_with_class),1))
         train_predict=self.clf.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
         train_accuracy=accuracy_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
@@ -224,11 +230,23 @@ class ranking_cg:
         
         trainroc=roc_auc_score(res_with_class.trainclass,res_with_class.memb)
         
+        trainsense=sensitivity_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        trainspec=specificity_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        traingeo=geometric_mean_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        trainprec=precision_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        trainfone=f1_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        
         self.duals=np.array(self.m.Pi)
         
         self.train_roc_list=np.array(trainroc)
         self.train_accuracy_list=np.array(train_accuracy)
         self.objective_values=np.array(self.m.objVal)
+        
+        self.train_sensitivity_list=np.array(trainsense)
+        self.train_specificity_list=np.array(trainspec)
+        self.train_geometric_mean_list=np.array(traingeo)
+        self.train_precision_list=np.array(trainprec)
+        self.train_fone_list=np.array(trainfone)
         
         self.weight_record=[]
         
@@ -367,12 +385,30 @@ class ranking_cg:
         test_predict=self.clf.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
         accuracy_percentage=accuracy_score(res_with_class.testclass.values.reshape(len(res_with_class),1), test_predict)
         
+        tesense=sensitivity_score(res_with_class.testclass.values.reshape(len(res_with_class),1), test_predict)
+        tespec=specificity_score(res_with_class.testclass.values.reshape(len(res_with_class),1), test_predict)
+        tegeo=geometric_mean_score(res_with_class.testclass.values.reshape(len(res_with_class),1), test_predict)
+        teprec=precision_score(res_with_class.testclass.values.reshape(len(res_with_class),1), test_predict)
+        tefone=f1_score(res_with_class.testclass.values.reshape(len(res_with_class),1), test_predict)
+        
         if self.counter==1:
             self.test_roc_list=np.array(testroc)
             self.test_accuracy_list=np.array(accuracy_percentage) 
+            
+            self.test_sensitivity_list=np.array(tesense)
+            self.test_specificity_list=np.array(tespec)
+            self.test_geometric_mean_list=np.array(tegeo)
+            self.test_precision_list=np.array(teprec)
+            self.test_fone_list=np.array(tefone)
         else:
             self.test_roc_list=np.append(self.test_roc_list,testroc)
-            self.test_accuracy_list=np.append(self.test_accuracy_list,accuracy_percentage)            
+            self.test_accuracy_list=np.append(self.test_accuracy_list,accuracy_percentage)  
+            
+            self.test_sensitivity_list=np.append(self.test_sensitivity_list,tesense)
+            self.test_specificity_list=np.append(self.test_specificity_list,tespec)
+            self.test_geometric_mean_list=np.append(self.test_geometric_mean_list,tegeo)
+            self.test_precision_list=np.append(self.test_precision_list,teprec)
+            self.test_fone_list=np.append(self.test_fone_list,tefone)
         
         
         self.counter=self.counter+1
@@ -443,8 +479,8 @@ class ranking_cg:
         
         res_with_class=pd.DataFrame({'trainclass':train_class_numpy[:,0],'memb':res_train[:,0]},index=range(len(res_train)))
          #accuracy
-        #self.clf=tree.DecisionTreeClassifier(max_depth=1)
-        self.clf=svm.LinearSVC(class_weight="balanced")
+        self.clf=tree.DecisionTreeClassifier(max_depth=1)
+        #self.clf=svm.LinearSVC(class_weight="balanced")
         self.clf.fit(res_with_class.memb.values.reshape(len(res_with_class),1),res_with_class.trainclass.values.reshape(len(res_with_class),1))
         train_predict=self.clf.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
         train_accuracy=accuracy_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
@@ -453,10 +489,23 @@ class ranking_cg:
         
         trainroc=roc_auc_score(res_with_class.trainclass,res_with_class.memb)
         
+        trainsense=sensitivity_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        trainspec=specificity_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        traingeo=geometric_mean_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        trainprec=precision_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        trainfone=f1_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        
 
         self.train_roc_list=np.append(self.train_roc_list,trainroc)
         self.train_accuracy_list=np.append(self.train_accuracy_list,train_accuracy)
         self.objective_values=np.append(self.objective_values,self.m.objVal)
+        
+                
+        self.train_sensitivity_list=np.append(self.train_sensitivity_list,trainsense)
+        self.train_specificity_list=np.append(self.train_specificity_list,trainspec)
+        self.train_geometric_mean_list=np.append(self.train_geometric_mean_list,traingeo)
+        self.train_precision_list=np.append(self.train_precision_list,trainprec)
+        self.train_fone_list=np.append(self.train_fone_list,trainfone)
         
         tmp_weight_list=np.array([0])
         for i in range(len(self.weights)):

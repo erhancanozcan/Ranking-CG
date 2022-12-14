@@ -10,6 +10,11 @@ from sklearn.metrics import roc_auc_score
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import tree
 from scipy.spatial import distance_matrix
+from imblearn.metrics import sensitivity_score
+from imblearn.metrics import specificity_score
+from imblearn.metrics import geometric_mean_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import f1_score
 
 class full_rank(base_srcg):
     
@@ -116,6 +121,18 @@ class full_rank(base_srcg):
         
         self.objective_values=[self.fm.objVal]
         
+        trainsense=sensitivity_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        trainspec=specificity_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        traingeo=geometric_mean_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        trainprec=precision_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        trainfone=f1_score(res_with_class.trainclass.values.reshape(len(res_with_class),1), train_predict)
+        
+        self.train_sensitivity_list=[trainsense]
+        self.train_specificity_list=[trainspec]
+        self.train_geometric_mean_list=[traingeo]
+        self.train_precision_list=[trainprec]
+        self.train_fone_list=[trainfone]
+        
         err_counter=0
         record=np.zeros(len(self.pos)*len(self.neg))
         for x in self.fm.getVars():
@@ -150,6 +167,20 @@ class full_rank(base_srcg):
         
         test_predict=self.fclf.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
         self.test_accuracy_list=[accuracy_score(res_with_class.testclass.values.reshape(len(res_with_class),1), test_predict)]
+        
+        
+        tesense=sensitivity_score(res_with_class.testclass.values.reshape(len(res_with_class),1), test_predict)
+        tespec=specificity_score(res_with_class.testclass.values.reshape(len(res_with_class),1), test_predict)
+        tegeo=geometric_mean_score(res_with_class.testclass.values.reshape(len(res_with_class),1), test_predict)
+        teprec=precision_score(res_with_class.testclass.values.reshape(len(res_with_class),1), test_predict)
+        tefone=f1_score(res_with_class.testclass.values.reshape(len(res_with_class),1), test_predict)
+        
+        self.test_sensitivity_list=[tesense]
+        self.test_specificity_list=[tespec]
+        self.test_geometric_mean_list=[tegeo]
+        self.test_precision_list=[teprec]
+        self.test_fone_list=[tefone]
+        
         
         self.weight_record=[self.fweight_list]
         self.test_predictions=test_predict
