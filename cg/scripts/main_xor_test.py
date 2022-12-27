@@ -8,7 +8,7 @@ sys.path.append(folder_location)
 
 
 #dataset name
-d_name="parabol_3"
+d_name="xor_test" #parabol_3
 
 #folder_location=folder_location+"/github_column_generation"
 #data_location=folder_location+"/data"
@@ -125,8 +125,8 @@ Parameters:
 
 
 
-alg_type="l_inf_rank"
-stp_perc=0.01
+alg_type="ranking_cg_prototype"
+stp_perc=0.01#0.01
 stp_cond="tr_obj"
 lr=1.0
 alpha=0.1
@@ -140,8 +140,8 @@ method1=init_alg(alg_type,train_data,train_class,test_data,test_class,df,df_test
                           selected_col_index=0,scale=True,prot_stop_perc=prot_stop_perc,
                           max_epoch=max_epoch)
 
-#method1.run(plot=False,name="no_balanced_parabol_3_ranking_cg_prototype_w_ref_tree_")
-method1.run()
+method1.run(plot=True,name="xor_test_ranking_cg_prototype_")
+#method1.run()
 
 #All the statistics that we want to check.
 #print(method1.test_roc_list)

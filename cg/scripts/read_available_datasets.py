@@ -36,6 +36,44 @@ def selected_data_set(datasetname,location):
         
         return df,df_test,test_class,test_data,train_class,train_data
     
+    
+    if datasetname=="xor_test":
+        
+        location=location+"/xor"
+        os.chdir(location)
+        data = pd.read_csv('xor_data.csv',sep=',')
+        class_data=data[['class']]
+        data=data.drop(['class'], axis=1)
+        
+        from sklearn.model_selection import train_test_split
+        train_data, test_data, train_class, test_class = train_test_split(data, class_data, test_size = 0.20, random_state = 5,stratify=class_data)
+        df=pd.concat([train_data, train_class], axis=1)
+        df_test=pd.concat([test_data,test_class],axis=1)
+        
+        
+        #plt.scatter(x=data.f0,y=data.f1,c=data[['class']].values[:,0])
+        
+        #test data generation to shade the region.
+        test_x=np.arange(-0.4+0.001,+1.6,0.01)
+        test_y=np.arange(-0.6+0.001,+1.4,0.01)
+        
+        #test_x=np.linspace(-3, 3, 120)
+        #test_y=np.linspace(0, 11, 220)
+        
+        
+        test_data=np.array(np.meshgrid(test_x, test_y)).T.reshape(-1,2)
+        test_data=pd.DataFrame(test_data,columns=['f0','f1'])
+        test_data['class']=1
+        test_data.iat[0,2]=-1
+        test_data.iat[10,2]=-1
+        
+        df_test=test_data
+        
+        test_class=df_test[['class']]
+        test_data=df_test.drop(['class'], axis=1)
+        
+        return df,df_test,test_class,test_data,train_class,train_data
+    
     if datasetname=="monks1":
         location=location+"/monks1"
         os.chdir(location)
