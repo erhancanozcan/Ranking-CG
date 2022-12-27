@@ -4,6 +4,7 @@
 # Folders with saved data
 logs/
 figs/
+out/
 Datasets/
 
 
