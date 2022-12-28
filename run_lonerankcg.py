@@ -169,7 +169,7 @@ if __name__ == '__main__':
         except:
             content = os.path.join(data_location,dname, dname+'.data')
             dt = pd.read_csv(content)
-            y = dt.iloc[:,-1]
+            y = dt.iloc[:,-1].to_frame()
             X =  dt.iloc[:,:-1]
             X = pd.get_dummies(X,drop_first=True)
 

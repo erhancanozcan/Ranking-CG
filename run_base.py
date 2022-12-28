@@ -172,7 +172,7 @@ if __name__ == '__main__':
         except:
             content = os.path.join(data_location,dname, dname+'.data')
             dt = pd.read_csv(content)
-            y = dt.iloc[:,-1]
+            y = dt.iloc[:,-1].to_frame()
             X =  dt.iloc[:,:-1]
             X = pd.get_dummies(X,drop_first=True)
 
@@ -210,10 +210,10 @@ if __name__ == '__main__':
         
         for alg_type in ['base']:
             result_lists = []
-            #for stp_perc in stp_perc_list:
-            for stp_perc in [0.01,0.001]:
-                #for lr in C_alternatives:
-                for lr in [0.01,0.001]:
+            for stp_perc in stp_perc_list:
+            #for stp_perc in [0.01,0.001]:
+                for lr in C_alternatives:
+                #for lr in [0.01,0.001]:
                     strat_ = 0
                     m=0
                     for train_index, test_index in skf.split(X_train, y_train):
