@@ -191,7 +191,7 @@ if __name__ == '__main__':
         X_test_distance = scipy.spatial.distance.cdist(X_test,X_train, 'euclidean')
         
         
-        C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+5*[pow(10,i) for i in np.linspace(-5,5,11)]
+        C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+list(5*np.array([pow(10,i) for i in np.linspace(-5,5,11)]))
         
         stp_perc_list = [0.001,0.005,0.01,0.05,0.1,0.5,1,5,10]
 
