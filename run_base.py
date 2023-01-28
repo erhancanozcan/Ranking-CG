@@ -196,7 +196,7 @@ if __name__ == '__main__':
         
         C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+list(5*np.array([pow(10,i) for i in np.linspace(-5,5,11)]))
         
-        stp_perc_list = [0.001,0.005,0.01,0.05,0.1,0.5,1,5,10]
+        stp_perc_list = [0.0001,0.0005,0.001,0.0025,0.005,0.01]
 
         stp_cond="tr_obj"
         lr=1.0

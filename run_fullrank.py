@@ -146,7 +146,7 @@ if __name__ == '__main__':
     args = parser.parse_args().kwargs
     
     #args={'dname' : 'yeast6'}
-    print(args)
+    #print(args)
 
     if args['dname'] == 'All':
         data_list = os.listdir(data_location)
@@ -193,7 +193,7 @@ if __name__ == '__main__':
         
         C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+list(5*np.array([pow(10,i) for i in np.linspace(-5,5,11)]))
         
-        stp_perc_list = [0.001,0.005,0.01,0.05,0.1,0.5,1,5,10]
+        stp_perc_list = [0.0001,0.0005,0.001,0.0025,0.005,0.01]
 
         stp_cond="tr_obj"
         lr=1.0
@@ -215,6 +215,10 @@ if __name__ == '__main__':
                                 max_epoch=max_epoch)
 
         method1.run()
+        calc_weights=method1.fweight_list
+        num_coef_001=sum(abs(np.array(calc_weights))>0.001)
+        num_coef_01=sum(abs(np.array(calc_weights))>0.01)
+        num_coef_05=sum(abs(np.array(calc_weights))>0.05)
         #base icin method1.opt_time defined degil o yuzden try except koydum
         try:
             all_res.append([dname, alg_type,None,None] + [method1.opt_time,method1.train_roc_list[len(method1.train_roc_list)-1],method1.train_accuracy_list[len(method1.train_accuracy_list)-1],\
@@ -224,7 +228,7 @@ if __name__ == '__main__':
                 method1.test_roc_list[len(method1.test_roc_list)-1],method1.test_accuracy_list[len(method1.test_accuracy_list)-1],\
                 method1.test_sensitivity_list[len(method1.test_sensitivity_list)-1], method1.test_specificity_list[len(method1.test_specificity_list)-1],\
                 method1.test_geometric_mean_list[len(method1.test_geometric_mean_list)-1],method1.test_precision_list[len(method1.test_precision_list)-1],\
-                method1.test_fone_list[len(method1.test_fone_list)-1],len(method1.train_accuracy_list),len(method1.train_accuracy_list),len(method1.train_accuracy_list)])
+                method1.test_fone_list[len(method1.test_fone_list)-1],num_coef_001,num_coef_01,num_coef_05])
         except:
             all_res.append([dname, alg_type,None,None] + [None,method1.train_roc_list[len(method1.train_roc_list)-1],method1.train_accuracy_list[len(method1.train_accuracy_list)-1],\
                 method1.train_sensitivity_list[len(method1.train_sensitivity_list)-1], method1.train_specificity_list[len(method1.train_specificity_list)-1],\
@@ -233,7 +237,7 @@ if __name__ == '__main__':
                 method1.test_roc_list[len(method1.test_roc_list)-1],method1.test_accuracy_list[len(method1.test_accuracy_list)-1],\
                 method1.test_sensitivity_list[len(method1.test_sensitivity_list)-1], method1.test_specificity_list[len(method1.test_specificity_list)-1],\
                 method1.test_geometric_mean_list[len(method1.test_geometric_mean_list)-1],method1.test_precision_list[len(method1.test_precision_list)-1],\
-                method1.test_fone_list[len(method1.test_fone_list)-1],len(method1.train_accuracy_list),len(method1.train_accuracy_list),len(method1.train_accuracy_list)])
+                method1.test_fone_list[len(method1.test_fone_list)-1],num_coef_001,num_coef_01,num_coef_05])
                 
         
         save_date = datetime.datetime.now().strftime('%m%d%y_%H%M%S')

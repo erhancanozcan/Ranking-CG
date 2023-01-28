@@ -523,12 +523,16 @@ class ranking_cg:
         if self.stopping_condition == "tr_obj":
             prev_obj=self.objective_values[len(self.objective_values)-2]
             cur_obj=self.objective_values[len(self.objective_values)-1]
-            
+        
+        
+            stopper=True
+            if len(self.train_roc_list)==len(self.train_data):
+                stopper=False
             if ((prev_obj-cur_obj)/prev_obj) < self.stopping_percentage:
-                return False
+                stopper=False
             if cur_obj==0:
-                return False
-            return True
+                stopper=False
+            return stopper
         elif self.stopping_condition == "real_tr_obj":
             prev_obj=self.real_training_objective[len(self.real_training_objective)-2]
             cur_obj=self.real_training_objective[len(self.real_training_objective)-1]

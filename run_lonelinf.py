@@ -243,6 +243,10 @@ if __name__ == '__main__':
                                     max_epoch=max_epoch)
 
             method1.run()
+            calc_weights=method1.fweight_list
+            num_coef_001=sum(abs(np.array(calc_weights))>0.001)
+            num_coef_01=sum(abs(np.array(calc_weights))>0.01)
+            num_coef_05=sum(abs(np.array(calc_weights))>0.05)
 
             try:
                 all_res.append([dname, alg_type,None,best_lr] + [method1.opt_time,method1.train_roc_list[len(method1.train_roc_list)-1],method1.train_accuracy_list[len(method1.train_accuracy_list)-1],\
@@ -252,7 +256,7 @@ if __name__ == '__main__':
                     method1.test_roc_list[len(method1.test_roc_list)-1],method1.test_accuracy_list[len(method1.test_accuracy_list)-1],\
                     method1.test_sensitivity_list[len(method1.test_sensitivity_list)-1], method1.test_specificity_list[len(method1.test_specificity_list)-1],\
                     method1.test_geometric_mean_list[len(method1.test_geometric_mean_list)-1],method1.test_precision_list[len(method1.test_precision_list)-1],\
-                    method1.test_fone_list[len(method1.test_fone_list)-1],len(method1.train_accuracy_list),len(method1.train_accuracy_list),len(method1.train_accuracy_list)])
+                    method1.test_fone_list[len(method1.test_fone_list)-1],num_coef_001,num_coef_01,num_coef_05])
             except:
                 all_res.append([dname, alg_type,None,best_lr] + [None,method1.train_roc_list[len(method1.train_roc_list)-1],method1.train_accuracy_list[len(method1.train_accuracy_list)-1],\
                     method1.train_sensitivity_list[len(method1.train_sensitivity_list)-1], method1.train_specificity_list[len(method1.train_specificity_list)-1],\
@@ -261,7 +265,7 @@ if __name__ == '__main__':
                     method1.test_roc_list[len(method1.test_roc_list)-1],method1.test_accuracy_list[len(method1.test_accuracy_list)-1],\
                     method1.test_sensitivity_list[len(method1.test_sensitivity_list)-1], method1.test_specificity_list[len(method1.test_specificity_list)-1],\
                     method1.test_geometric_mean_list[len(method1.test_geometric_mean_list)-1],method1.test_precision_list[len(method1.test_precision_list)-1],\
-                    method1.test_fone_list[len(method1.test_fone_list)-1],len(method1.train_accuracy_list),len(method1.train_accuracy_list),len(method1.train_accuracy_list)])
+                    method1.test_fone_list[len(method1.test_fone_list)-1],num_coef_001,num_coef_01,num_coef_05])
                     
         save_date = datetime.datetime.now().strftime('%m%d%y_%H%M%S')
         alg_type='l1andlinf'
