@@ -538,11 +538,14 @@ class base_srcg:
             prev_obj=self.train_roc_list[len(self.train_roc_list)-2]
             cur_obj=self.train_roc_list[len(self.train_roc_list)-1]
             
-            if ((prev_obj-cur_obj)/prev_obj) < self.stopping_percentage:
-                return False
-            if cur_obj==0:
-                return False
-            return True
+            stopper=True
+            if len(self.train_roc_list)==len(self.train_data):
+                stopper=False
+            if (abs(prev_obj-cur_obj)/prev_obj) < self.stopping_percentage:
+                stopper=False
+            if cur_obj==1:
+                stopper=False
+            return stopper
 
     
     def run(self):

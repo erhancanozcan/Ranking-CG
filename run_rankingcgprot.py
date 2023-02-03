@@ -193,8 +193,9 @@ if __name__ == '__main__':
         
         
         stp_perc_list = [0.0001,0.0005,0.001,0.0025,0.005,0.01]
+        stp_perc_list.reverse()
 
-        stp_cond="tr_obj"
+        stp_cond="tr_roc"
         lr=0.001
         alpha=0.1
         prot_stop_perc=1e-5
