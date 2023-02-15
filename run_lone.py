@@ -13,7 +13,7 @@ import scipy
 from scipy.stats import iqr
 #import cvxpy as cp
 #from cvxpy.atoms.pnorm import pnorm
-import dlib
+#import dlib
 from datetime import date
 from scipy.io import arff
 from io import StringIO
@@ -207,155 +207,78 @@ if __name__ == '__main__':
         skf = StratifiedKFold(n_splits=no_of_folds)
         
         
-        
-        # Rank SVM
-        alg_type = 'RankSVM'
-        result_lists = []
-        for lr in C_alternatives:
-            strat_ = 0
-            m=0
-            for train_index, test_index in skf.split(X_train, y_train):
-                #print(X_train,train_index)
-                X_train_val = X_train.iloc[train_index]
-                X_test_val = X_train.iloc[test_index]
-                y_train_val = y_train.iloc[train_index]
-                y_test_val = y_train.iloc[test_index]
-                dt_train_val = dt_train.iloc[train_index,:]
-                dt_test_val = dt_train.iloc[test_index,:]
+        stp_perc=0.1
+        # l1_rank and l_inf_rank
 
-                X_train_distance_val = scipy.spatial.distance.cdist(X_train_val,X_train_val, 'euclidean')
-                X_test_distance_val = scipy.spatial.distance.cdist(X_test_val,X_train_val, 'euclidean')
+        for alg_type in ['l1_rank']:
+            result_lists = []
+            for lr in C_alternatives:
+                strat_ = 0
+                m=0
+                for train_index, test_index in skf.split(X_train, y_train):
+                    #print(X_train,train_index)
+                    X_train_val = X_train.iloc[train_index]
+                    X_test_val = X_train.iloc[test_index]
+                    y_train_val = y_train.iloc[train_index]
+                    y_test_val = y_train.iloc[test_index]
+                    dt_train_val = dt_train.iloc[train_index,:]
+                    dt_test_val = dt_train.iloc[test_index,:]
 
-                train_class = y_train_val
-                test_class = y_test_val
 
-                train_class['counter'] = range(len(train_class))
+                    method1=init_alg(alg_type,X_train_val,y_train_val,X_test_val,y_test_val,dt_train_val,dt_test_val,
+                                            distance="euclidian",stopping_condition=stp_cond,
+                                            stopping_percentage=stp_perc,lr=lr, alpha=alpha,
+                                            selected_col_index=0,scale=True,prot_stop_perc=prot_stop_perc,
+                                            max_epoch=max_epoch)
 
-                pos=train_class.loc[train_class['class']==1]
-                neg=train_class.loc[train_class['class']==-1]
-                pos=pos.iloc[:,1].values
-                neg=neg.iloc[:,1].values
-                train_class=train_class.drop(['counter'], axis=1)
+                    method1.run()
 
-                train_relevant=X_train_distance_val[pos,:]
-                train_irrelevant=X_train_distance_val[neg,:]
+                    result_lists.append([lr,m,method1.test_roc_list[len(method1.test_roc_list)-1]])
+                    m+=1
+            temp_ = pd.DataFrame(result_lists).groupby(0).mean().reset_index()
+            best_lr = temp_.iloc[temp_[2].idxmax()][0]
+            
+            method1=init_alg(alg_type,X_train,y_train,X_test,y_test,dt_train,dt_test,
+                                    distance="euclidian",stopping_condition=stp_cond,
+                                    stopping_percentage=stp_perc,lr=best_lr, alpha=alpha,
+                                    selected_col_index=0,scale=True,prot_stop_perc=prot_stop_perc,
+                                    max_epoch=max_epoch)
 
-                dlib_data = dlib.ranking_pair()
-                for i in range(len(pos)):
-                    dlib_data.relevant.append(dlib.vector(train_relevant[i,:]))
+            method1.run()
+            calc_weights=method1.fweight_list
+            num_coef_001=sum(abs(np.array(calc_weights))>0.001)
+            num_coef_01=sum(abs(np.array(calc_weights))>0.01)
+            num_coef_05=sum(abs(np.array(calc_weights))>0.05)
+
+            try:
+                all_res.append([dname, alg_type,None,best_lr] + [method1.opt_time,method1.train_roc_list[len(method1.train_roc_list)-1],method1.train_accuracy_list[len(method1.train_accuracy_list)-1],\
+                    method1.train_sensitivity_list[len(method1.train_sensitivity_list)-1], method1.train_specificity_list[len(method1.train_specificity_list)-1],\
+                    method1.train_geometric_mean_list[len(method1.train_geometric_mean_list)-1],method1.train_precision_list[len(method1.train_precision_list)-1],\
+                    method1.train_fone_list[len(method1.train_fone_list)-1],\
+                    method1.test_roc_list[len(method1.test_roc_list)-1],method1.test_accuracy_list[len(method1.test_accuracy_list)-1],\
+                    method1.test_sensitivity_list[len(method1.test_sensitivity_list)-1], method1.test_specificity_list[len(method1.test_specificity_list)-1],\
+                    method1.test_geometric_mean_list[len(method1.test_geometric_mean_list)-1],method1.test_precision_list[len(method1.test_precision_list)-1],\
+                    method1.test_fone_list[len(method1.test_fone_list)-1],num_coef_001,num_coef_01,num_coef_05])
+            except:
+                all_res.append([dname, alg_type,None,best_lr] + [None,method1.train_roc_list[len(method1.train_roc_list)-1],method1.train_accuracy_list[len(method1.train_accuracy_list)-1],\
+                    method1.train_sensitivity_list[len(method1.train_sensitivity_list)-1], method1.train_specificity_list[len(method1.train_specificity_list)-1],\
+                    method1.train_geometric_mean_list[len(method1.train_geometric_mean_list)-1],method1.train_precision_list[len(method1.train_precision_list)-1],\
+                    method1.train_fone_list[len(method1.train_fone_list)-1],\
+                    method1.test_roc_list[len(method1.test_roc_list)-1],method1.test_accuracy_list[len(method1.test_accuracy_list)-1],\
+                    method1.test_sensitivity_list[len(method1.test_sensitivity_list)-1], method1.test_specificity_list[len(method1.test_specificity_list)-1],\
+                    method1.test_geometric_mean_list[len(method1.test_geometric_mean_list)-1],method1.test_precision_list[len(method1.test_precision_list)-1],\
+                    method1.test_fone_list[len(method1.test_fone_list)-1],num_coef_001,num_coef_01,num_coef_05])
                     
-                for i in range(len(neg)):
-                    dlib_data.nonrelevant.append(dlib.vector(train_irrelevant[i,:]))
-
-                trainer = dlib.svm_rank_trainer()
-                trainer.c = lr
-
-
-                rank = trainer.train(dlib_data)
-                num_coef_001=sum(abs(np.array(rank.weights))>0.001)
-                num_coef_01=sum(abs(np.array(rank.weights))>0.01)
-                num_coef_05=sum(abs(np.array(rank.weights))>0.05)
-                length=len(np.array(rank.weights))
-                            
-
-                estimate_train=np.zeros(len(train_class))
-                for i in range(len(train_class)):
-                    estimate_train[i]=rank(dlib.vector(X_train_distance_val[i,:]))
-                
-                res_with_class=pd.DataFrame({'trainclass':train_class.values[:,0],'memb':estimate_train},index=range(len(train_class)))
-                clf_tree=tree.DecisionTreeClassifier(max_depth=1)
-                clf_tree.fit(res_with_class.memb.values.reshape(len(res_with_class),1),res_with_class.trainclass.values.reshape(len(res_with_class),1))
-                trainroc=roc_auc_score(res_with_class.trainclass,res_with_class.memb)
-
-                estimate_test=np.zeros(len(test_class))
-                for i in range(len(test_class)):
-                    estimate_test[i]=rank(dlib.vector(X_test_distance_val[i,:]))
-
-                res_with_class=pd.DataFrame({'testclass':test_class.values[:,0],'memb':estimate_test},index=range(len(test_class)))
-                #accuracy
-                test_predict=clf_tree.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
-                
-
-                testroc=roc_auc_score(res_with_class.testclass,res_with_class.memb)
-
-                strat_ += 1
-                result_lists.append([lr,strat_,trainroc,testroc])
-
-
-        temp_ = pd.DataFrame(result_lists).groupby(0).mean().reset_index()
-        best_lr = temp_.iloc[temp_[3].idxmax()][0]
-
-
-
-        X_train_distance = scipy.spatial.distance.cdist(X_train,X_train, 'euclidean')
-        X_test_distance = scipy.spatial.distance.cdist(X_test,X_train, 'euclidean')
-        train_class = y_train
-        test_class = y_test
-
-        train_class['counter'] = range(len(train_class))
-
-        pos=train_class.loc[train_class['class']==1]
-        neg=train_class.loc[train_class['class']==-1]
-        pos=pos.iloc[:,1].values
-        neg=neg.iloc[:,1].values
-        train_class=train_class.drop(['counter'], axis=1)
-
-
-        train_relevant=X_train_distance[pos,:]
-        train_irrelevant=X_train_distance[neg,:]
-
-        dlib_data = dlib.ranking_pair()
-        for i in range(len(pos)):
-            dlib_data.relevant.append(dlib.vector(train_relevant[i,:]))
-            
-        for i in range(len(neg)):
-            dlib_data.nonrelevant.append(dlib.vector(train_irrelevant[i,:]))
-
-
-        trainer = dlib.svm_rank_trainer()
-        trainer.c = best_lr
-
-        start_time =time.time()
-        rank = trainer.train(dlib_data)
-        num_coef_001=sum(abs(np.array(rank.weights))>0.001)
-        num_coef_01=sum(abs(np.array(rank.weights))>0.01)
-        num_coef_05=sum(abs(np.array(rank.weights))>0.05)
-        length=len(np.array(rank.weights))
-        elapsed_time =time.time()-start_time                   
-
-
-        estimate_train=np.zeros(len(train_class))
-        for i in range(len(train_class)):
-            estimate_train[i]=rank(dlib.vector(X_train_distance[i,:]))
-
-        res_with_class=pd.DataFrame({'trainclass':train_class.values[:,0],'memb':estimate_train},index=range(len(train_class)))
-
-        clf_tree=tree.DecisionTreeClassifier(max_depth=1)
-        clf_tree.fit(res_with_class.memb.values.reshape(len(res_with_class),1),res_with_class.trainclass.values.reshape(len(res_with_class),1))
-        train_predict=clf_tree.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
-
-        #calculate test auc using the constructed model.
-        estimate_test=np.zeros(len(test_class))
-        for i in range(len(test_class)):
-            estimate_test[i]=rank(dlib.vector(X_test_distance[i,:]))
-
-        res_with_class=pd.DataFrame({'testclass':test_class.values[:,0],'memb':estimate_test},index=range(len(test_class)))
-        test_predict=clf_tree.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
-
-        performances_ = getPerformance(y_train['class'].values.reshape(-1), y_test['class'].values.reshape(-1), train_predict,test_predict)
-        performances_ = [elapsed_time] + performances_
-
-        all_res.append([dname, 'RankSVM']+[None,best_lr] + performances_+[num_coef_001,num_coef_01,num_coef_05])    
-        
         save_date = datetime.datetime.now().strftime('%m%d%y_%H%M%S')
-        alg_type='RankSVM'
-            
+        alg_type='l1_rank'
+          
         save_file='%s_%s_%s.csv'%(dname,alg_type,save_date)
         pd.DataFrame(all_res).to_csv('./logs/'+save_file)
         
         run_end_time=datetime.datetime.now()
         
         print('Time Elapsed: %s'%(run_end_time-run_start_time))
+
         
         
         

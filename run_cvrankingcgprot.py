@@ -191,29 +191,25 @@ if __name__ == '__main__':
         X_test_distance = scipy.spatial.distance.cdist(X_test,X_train, 'euclidean')
         
         
-        #C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+list(5*np.array([pow(10,i) for i in np.linspace(-5,5,11)]))
-        C_alternatives = [pow(10,i) for i in np.linspace(-4,4,9)]+list(5*np.array([pow(10,i) for i in np.linspace(-4,3,8)]))
-        C_alternatives.sort()
         
-        stp_perc_list = [0.00005,0.0001,0.00025,0.0005,0.00075,0.001,0.0025,0.005,0.0075,0.01,0.025]
+        #stp_perc_list = [0.00005,0.0001,0.00025,0.0005,0.00075,0.001,0.0025,0.005,0.0075,0.01,0.025]
+        stp_perc_list = [0.01,0.025]
         stp_perc_list.reverse()
 
         stp_cond="tr_roc"
-        lr=1.0
+        lr=0.001
         alpha=0.1
         prot_stop_perc=1e-5
         max_epoch=1000
 
         no_of_folds=5
-        skf = StratifiedKFold(n_splits=no_of_folds)
-        
-        
-        
-        # l1 rank cg
-        for alg_type in ['l1_rank_cg']:
-            result_lists = []
-            for stp_perc in stp_perc_list:
-                for lr in C_alternatives:
+        result_lists = []
+        for i in range (5):
+            skf = StratifiedKFold(n_splits=no_of_folds,random_state=i,shuffle=True)
+                                    
+            # ranking_cg and ranking_cg_prototype
+            for alg_type in ['ranking_cg_prototype']:
+                for stp_perc in stp_perc_list:
                     strat_ = 0
                     m=0
                     for train_index, test_index in skf.split(X_train, y_train):
@@ -224,57 +220,47 @@ if __name__ == '__main__':
                         y_test_val = y_train.iloc[test_index]
                         dt_train_val = dt_train.iloc[train_index,:]
                         dt_test_val = dt_train.iloc[test_index,:]
-
-
+    
+    
                         method1=init_alg(alg_type,X_train_val,y_train_val,X_test_val,y_test_val,dt_train_val,dt_test_val,
                                                 distance="euclidian",stopping_condition=stp_cond,
                                                 stopping_percentage=stp_perc,lr=lr, alpha=alpha,
                                                 selected_col_index=0,scale=True,prot_stop_perc=prot_stop_perc,
                                                 max_epoch=max_epoch)
-
+    
                         method1.run()
-
-                        result_lists.append([stp_perc,lr,m,method1.test_roc_list[len(method1.test_roc_list)-1]])
+    
+                        result_lists.append([stp_perc,m,method1.test_roc_list[len(method1.test_roc_list)-1]])
                         m+=1
-            temp_ = pd.DataFrame(result_lists).groupby([0,1]).mean().reset_index()
-            best_stp_perc = temp_.iloc[temp_[3].idxmax()][0]
-            best_lr= temp_.iloc[temp_[3].idxmax()][1]
-            
-            method1=init_alg(alg_type,X_train,y_train,X_test,y_test,dt_train,dt_test,
-                                    distance="euclidian",stopping_condition=stp_cond,
-                                    stopping_percentage=best_stp_perc,lr=best_lr, alpha=alpha,
-                                    selected_col_index=0,scale=True,prot_stop_perc=prot_stop_perc,
-                                    max_epoch=max_epoch)
+        temp_ = pd.DataFrame(result_lists).groupby(0).mean().reset_index()
+        best_stp_perc = temp_.iloc[temp_[2].idxmax()][0]
+        
+        method1=init_alg(alg_type,X_train,y_train,X_test,y_test,dt_train,dt_test,
+                                distance="euclidian",stopping_condition=stp_cond,
+                                stopping_percentage=best_stp_perc,lr=lr, alpha=alpha,
+                                selected_col_index=0,scale=True,prot_stop_perc=prot_stop_perc,
+                                max_epoch=max_epoch)
 
-            method1.run()
-            try:
-                all_res.append([dname, alg_type,best_stp_perc,best_lr] + [method1.opt_time,method1.train_roc_list[len(method1.train_roc_list)-1],method1.train_accuracy_list[len(method1.train_accuracy_list)-1],\
-                    method1.train_sensitivity_list[len(method1.train_sensitivity_list)-1], method1.train_specificity_list[len(method1.train_specificity_list)-1],\
-                    method1.train_geometric_mean_list[len(method1.train_geometric_mean_list)-1],method1.train_precision_list[len(method1.train_precision_list)-1],\
-                    method1.train_fone_list[len(method1.train_fone_list)-1],\
-                    method1.test_roc_list[len(method1.test_roc_list)-1],method1.test_accuracy_list[len(method1.test_accuracy_list)-1],\
-                    method1.test_sensitivity_list[len(method1.test_sensitivity_list)-1], method1.test_specificity_list[len(method1.test_specificity_list)-1],\
-                    method1.test_geometric_mean_list[len(method1.test_geometric_mean_list)-1],method1.test_precision_list[len(method1.test_precision_list)-1],\
-                    method1.test_fone_list[len(method1.test_fone_list)-1],len(method1.train_accuracy_list),len(method1.train_accuracy_list),len(method1.train_accuracy_list)])
-            except:
-                all_res.append([dname, alg_type,best_stp_perc,best_lr] + [None,method1.train_roc_list[len(method1.train_roc_list)-1],method1.train_accuracy_list[len(method1.train_accuracy_list)-1],\
-                    method1.train_sensitivity_list[len(method1.train_sensitivity_list)-1], method1.train_specificity_list[len(method1.train_specificity_list)-1],\
-                    method1.train_geometric_mean_list[len(method1.train_geometric_mean_list)-1],method1.train_precision_list[len(method1.train_precision_list)-1],\
-                    method1.train_fone_list[len(method1.train_fone_list)-1],\
-                    method1.test_roc_list[len(method1.test_roc_list)-1],method1.test_accuracy_list[len(method1.test_accuracy_list)-1],\
-                    method1.test_sensitivity_list[len(method1.test_sensitivity_list)-1], method1.test_specificity_list[len(method1.test_specificity_list)-1],\
-                    method1.test_geometric_mean_list[len(method1.test_geometric_mean_list)-1],method1.test_precision_list[len(method1.test_precision_list)-1],\
-                    method1.test_fone_list[len(method1.test_fone_list)-1],len(method1.train_accuracy_list),len(method1.train_accuracy_list),len(method1.train_accuracy_list)])
-                    
-        save_date = datetime.datetime.now().strftime('%m%d%y_%H%M%S')
-        alg_type='l1rankcg'
+        method1.run()
+        alg_type='cv'+alg_type
+        all_res.append([dname, alg_type,best_stp_perc,None] + [method1.opt_time,method1.train_roc_list[len(method1.train_roc_list)-1],method1.train_accuracy_list[len(method1.train_accuracy_list)-1],\
+            method1.train_sensitivity_list[len(method1.train_sensitivity_list)-1], method1.train_specificity_list[len(method1.train_specificity_list)-1],\
+            method1.train_geometric_mean_list[len(method1.train_geometric_mean_list)-1],method1.train_precision_list[len(method1.train_precision_list)-1],\
+            method1.train_fone_list[len(method1.train_fone_list)-1],\
+            method1.test_roc_list[len(method1.test_roc_list)-1],method1.test_accuracy_list[len(method1.test_accuracy_list)-1],\
+            method1.test_sensitivity_list[len(method1.test_sensitivity_list)-1], method1.test_specificity_list[len(method1.test_specificity_list)-1],\
+            method1.test_geometric_mean_list[len(method1.test_geometric_mean_list)-1],method1.test_precision_list[len(method1.test_precision_list)-1],\
+            method1.test_fone_list[len(method1.test_fone_list)-1],len(method1.train_accuracy_list),len(method1.train_accuracy_list),len(method1.train_accuracy_list)])
             
+            
+        save_date = datetime.datetime.now().strftime('%m%d%y_%H%M%S')
+        alg_type='cvrankingcgprototype'
+          
         save_file='%s_%s_%s.csv'%(dname,alg_type,save_date)
         pd.DataFrame(all_res).to_csv('./logs/'+save_file)
         
         run_end_time=datetime.datetime.now()
         
         print('Time Elapsed: %s'%(run_end_time-run_start_time))
-        
         
         

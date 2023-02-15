@@ -191,7 +191,9 @@ if __name__ == '__main__':
         X_test_distance = scipy.spatial.distance.cdist(X_test,X_train, 'euclidean')
 
 
-        C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+list(5*np.array([pow(10,i) for i in np.linspace(-5,5,11)]))
+        #C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+list(5*np.array([pow(10,i) for i in np.linspace(-5,5,11)]))
+        C_alternatives = [pow(10,i) for i in np.linspace(-4,4,9)]+list(5*np.array([pow(10,i) for i in np.linspace(-4,3,8)]))
+        C_alternatives.sort()
 
 
         # SVC_l2
