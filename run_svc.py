@@ -221,7 +221,41 @@ if __name__ == '__main__':
         num_coef_05=sum(abs(np.array(base_estimator.coef_[0]))>0.05)
 
 
-        all_res.append([dname, 'SVC_l2']+[None,sh.best_params_['C']] + performances_+[num_coef_001,num_coef_01,num_coef_05])
+        all_res.append([dname, 'SVC_l2']+[None,sh.best_params_['C']] + performances_+[num_coef_001,num_coef_01,num_coef_05,10])
+        
+        for i in range (10):
+            X_train_tmp, X_test_tmp, y_train_tmp, y_test_tmp = train_test_split(X, y,
+                                                                stratify=y, 
+                                                                test_size=0.25,random_state=11+i)
+
+            y_train_tmp.columns = ['class']
+            y_test_tmp.columns = ['class']
+            dt_train_tmp  =X_train_tmp.copy()
+            dt_train_tmp['class'] = y_train_tmp
+
+
+            dt_test_tmp  =X_test_tmp.copy()
+            dt_test_tmp['class'] = y_test_tmp
+
+            X_train_distance_tmp = scipy.spatial.distance.cdist(X_train_tmp,X_train_tmp, 'euclidean')
+            X_test_distance_tmp = scipy.spatial.distance.cdist(X_test_tmp,X_train_tmp, 'euclidean')
+            
+            base_estimator = LinearSVC(penalty = sh.best_params_['penalty'],C = sh.best_params_['C'],class_weight = sh.best_params_['class_weight'],max_iter=1000000)
+            base_estimator.fit(X_train_distance_tmp,y_train_tmp.values.reshape(-1))
+            elapsed_time = time.time() - start_time
+
+            predicted_train = base_estimator.predict(X_train_distance_tmp)
+            predicted_test = base_estimator.predict(X_test_distance_tmp)
+
+            performances_ = getPerformance(y_train_tmp.values.reshape(-1), y_test_tmp.values.reshape(-1), predicted_train,predicted_test)
+            performances_ = [elapsed_time] + performances_
+
+            num_coef_001=sum(abs(np.array(base_estimator.coef_[0]))>0.001)
+            num_coef_01=sum(abs(np.array(base_estimator.coef_[0]))>0.01)
+            num_coef_05=sum(abs(np.array(base_estimator.coef_[0]))>0.05)
+
+
+            all_res.append([dname, 'SVC_l2']+[None,sh.best_params_['C']] + performances_+[num_coef_001,num_coef_01,num_coef_05,11+i])
 
         # SVC_l1
         param_grid= {'C':C_alternatives,
@@ -248,7 +282,43 @@ if __name__ == '__main__':
         num_coef_01=sum(abs(np.array(base_estimator.coef_[0]))>0.01)
         num_coef_05=sum(abs(np.array(base_estimator.coef_[0]))>0.05)
 
-        all_res.append([dname, 'SVC_l1']+[None,sh.best_params_['C']] + performances_+[num_coef_001,num_coef_01,num_coef_05])
+        all_res.append([dname, 'SVC_l1']+[None,sh.best_params_['C']] + performances_+[num_coef_001,num_coef_01,num_coef_05,10])
+        
+        
+        for i in range (10):
+            X_train_tmp, X_test_tmp, y_train_tmp, y_test_tmp = train_test_split(X, y,
+                                                                stratify=y, 
+                                                                test_size=0.25,random_state=11+i)
+
+            y_train_tmp.columns = ['class']
+            y_test_tmp.columns = ['class']
+            dt_train_tmp  =X_train_tmp.copy()
+            dt_train_tmp['class'] = y_train_tmp
+
+
+            dt_test_tmp  =X_test_tmp.copy()
+            dt_test_tmp['class'] = y_test_tmp
+
+            X_train_distance_tmp = scipy.spatial.distance.cdist(X_train_tmp,X_train_tmp, 'euclidean')
+            X_test_distance_tmp = scipy.spatial.distance.cdist(X_test_tmp,X_train_tmp, 'euclidean')
+            
+            base_estimator = LinearSVC(penalty = sh.best_params_['penalty'],C = sh.best_params_['C'],class_weight = sh.best_params_['class_weight'],max_iter=100000,dual=False)
+            base_estimator.fit(X_train_distance_tmp,y_train_tmp.values.reshape(-1))
+            elapsed_time = time.time() - start_time
+
+            predicted_train = base_estimator.predict(X_train_distance_tmp)
+            predicted_test = base_estimator.predict(X_test_distance_tmp)
+
+            performances_ = getPerformance(y_train_tmp.values.reshape(-1), y_test_tmp.values.reshape(-1), predicted_train,predicted_test)
+            performances_ = [elapsed_time] + performances_
+
+            num_coef_001=sum(abs(np.array(base_estimator.coef_[0]))>0.001)
+            num_coef_01=sum(abs(np.array(base_estimator.coef_[0]))>0.01)
+            num_coef_05=sum(abs(np.array(base_estimator.coef_[0]))>0.05)
+
+            all_res.append([dname, 'SVC_l1']+[None,sh.best_params_['C']] + performances_+[num_coef_001,num_coef_01,num_coef_05,11+i])
+            
+            
 
         # SVC_l2_weight
         param_grid= {'C':C_alternatives,
@@ -275,7 +345,44 @@ if __name__ == '__main__':
         num_coef_01=sum(abs(np.array(base_estimator.coef_[0]))>0.01)
         num_coef_05=sum(abs(np.array(base_estimator.coef_[0]))>0.05)
 
-        all_res.append([dname, 'SVC_l2_weight']+[None,sh.best_params_['C']] + performances_+[num_coef_001,num_coef_01,num_coef_05])
+        all_res.append([dname, 'SVC_l2_weight']+[None,sh.best_params_['C']] + performances_+[num_coef_001,num_coef_01,num_coef_05,10])
+        
+        
+        for i in range (10):
+            X_train_tmp, X_test_tmp, y_train_tmp, y_test_tmp = train_test_split(X, y,
+                                                                stratify=y, 
+                                                                test_size=0.25,random_state=11+i)
+
+            y_train_tmp.columns = ['class']
+            y_test_tmp.columns = ['class']
+            dt_train_tmp  =X_train_tmp.copy()
+            dt_train_tmp['class'] = y_train_tmp
+
+
+            dt_test_tmp  =X_test_tmp.copy()
+            dt_test_tmp['class'] = y_test_tmp
+
+            X_train_distance_tmp = scipy.spatial.distance.cdist(X_train_tmp,X_train_tmp, 'euclidean')
+            X_test_distance_tmp = scipy.spatial.distance.cdist(X_test_tmp,X_train_tmp, 'euclidean')
+            
+            
+            base_estimator = LinearSVC(penalty = sh.best_params_['penalty'],C = sh.best_params_['C'],class_weight = sh.best_params_['class_weight'],max_iter=100000)
+            
+            base_estimator.fit(X_train_distance_tmp,y_train_tmp.values.reshape(-1))
+            elapsed_time = time.time() - start_time
+
+            predicted_train = base_estimator.predict(X_train_distance_tmp)
+            predicted_test = base_estimator.predict(X_test_distance_tmp)
+
+            performances_ = getPerformance(y_train_tmp.values.reshape(-1), y_test_tmp.values.reshape(-1), predicted_train,predicted_test)
+            performances_ = [elapsed_time] + performances_
+
+            num_coef_001=sum(abs(np.array(base_estimator.coef_[0]))>0.001)
+            num_coef_01=sum(abs(np.array(base_estimator.coef_[0]))>0.01)
+            num_coef_05=sum(abs(np.array(base_estimator.coef_[0]))>0.05)
+            
+            all_res.append([dname, 'SVC_l2_weight']+[None,sh.best_params_['C']] + performances_+[num_coef_001,num_coef_01,num_coef_05,11+i])
+            
 
         # SVC_l1_weight
         param_grid= {'C':C_alternatives,
@@ -302,8 +409,44 @@ if __name__ == '__main__':
         num_coef_01=sum(abs(np.array(base_estimator.coef_[0]))>0.01)
         num_coef_05=sum(abs(np.array(base_estimator.coef_[0]))>0.05)
 
-        all_res.append([dname, 'SVC_l1_weight']+[None,sh.best_params_['C']]+ performances_+[num_coef_001,num_coef_01,num_coef_05])
+        all_res.append([dname, 'SVC_l1_weight']+[None,sh.best_params_['C']]+ performances_+[num_coef_001,num_coef_01,num_coef_05,10])
         
+
+        for i in range (10):
+            X_train_tmp, X_test_tmp, y_train_tmp, y_test_tmp = train_test_split(X, y,
+                                                                stratify=y, 
+                                                                test_size=0.25,random_state=11+i)
+
+            y_train_tmp.columns = ['class']
+            y_test_tmp.columns = ['class']
+            dt_train_tmp  =X_train_tmp.copy()
+            dt_train_tmp['class'] = y_train_tmp
+
+
+            dt_test_tmp  =X_test_tmp.copy()
+            dt_test_tmp['class'] = y_test_tmp
+
+            X_train_distance_tmp = scipy.spatial.distance.cdist(X_train_tmp,X_train_tmp, 'euclidean')
+            X_test_distance_tmp = scipy.spatial.distance.cdist(X_test_tmp,X_train_tmp, 'euclidean')
+            
+            
+            base_estimator = LinearSVC(penalty = sh.best_params_['penalty'],C = sh.best_params_['C'],class_weight = sh.best_params_['class_weight'],max_iter=100000)
+            
+            base_estimator.fit(X_train_distance_tmp,y_train_tmp.values.reshape(-1))
+            elapsed_time = time.time() - start_time
+
+            predicted_train = base_estimator.predict(X_train_distance_tmp)
+            predicted_test = base_estimator.predict(X_test_distance_tmp)
+
+            performances_ = getPerformance(y_train_tmp.values.reshape(-1), y_test_tmp.values.reshape(-1), predicted_train,predicted_test)
+            performances_ = [elapsed_time] + performances_
+
+            num_coef_001=sum(abs(np.array(base_estimator.coef_[0]))>0.001)
+            num_coef_01=sum(abs(np.array(base_estimator.coef_[0]))>0.01)
+            num_coef_05=sum(abs(np.array(base_estimator.coef_[0]))>0.05)
+            
+            all_res.append([dname, 'SVC_l1_weight']+[None,sh.best_params_['C']]+ performances_+[num_coef_001,num_coef_01,num_coef_05,11+i])
+
 
         save_date = datetime.datetime.now().strftime('%m%d%y_%H%M%S')
         alg_type='SVCall'

@@ -345,7 +345,84 @@ if __name__ == '__main__':
         performances_ = getPerformance(y_train['class'].values.reshape(-1), y_test['class'].values.reshape(-1), train_predict,test_predict)
         performances_ = [elapsed_time] + performances_
 
-        all_res.append([dname, 'RankSVM']+[None,best_lr] + performances_+[num_coef_001,num_coef_01,num_coef_05])    
+        all_res.append([dname, 'RankSVM']+[None,best_lr] + performances_+[num_coef_001,num_coef_01,num_coef_05,10])    
+        
+        
+        for idx in range(10):
+            X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                                                stratify=y, 
+                                                                test_size=0.25,random_state=11+idx)
+            
+            y_train.columns = ['class']
+            y_test.columns = ['class']
+            dt_train  =X_train.copy()
+            dt_train['class'] = y_train
+
+
+            dt_test  =X_test.copy()
+            dt_test['class'] = y_test
+
+            X_train_distance = scipy.spatial.distance.cdist(X_train,X_train, 'euclidean')
+            X_test_distance = scipy.spatial.distance.cdist(X_test,X_train, 'euclidean')
+            train_class = y_train
+            test_class = y_test
+
+            train_class['counter'] = range(len(train_class))
+
+            pos=train_class.loc[train_class['class']==1]
+            neg=train_class.loc[train_class['class']==-1]
+            pos=pos.iloc[:,1].values
+            neg=neg.iloc[:,1].values
+            train_class=train_class.drop(['counter'], axis=1)
+
+
+            train_relevant=X_train_distance[pos,:]
+            train_irrelevant=X_train_distance[neg,:]
+
+            dlib_data = dlib.ranking_pair()
+            for i in range(len(pos)):
+                dlib_data.relevant.append(dlib.vector(train_relevant[i,:]))
+                
+            for i in range(len(neg)):
+                dlib_data.nonrelevant.append(dlib.vector(train_irrelevant[i,:]))
+
+
+            trainer = dlib.svm_rank_trainer()
+            trainer.c = best_lr
+
+            start_time =time.time()
+            rank = trainer.train(dlib_data)
+            num_coef_001=sum(abs(np.array(rank.weights))>0.001)
+            num_coef_01=sum(abs(np.array(rank.weights))>0.01)
+            num_coef_05=sum(abs(np.array(rank.weights))>0.05)
+            length=len(np.array(rank.weights))
+            elapsed_time =time.time()-start_time                   
+
+
+            estimate_train=np.zeros(len(train_class))
+            for i in range(len(train_class)):
+                estimate_train[i]=rank(dlib.vector(X_train_distance[i,:]))
+
+            res_with_class=pd.DataFrame({'trainclass':train_class.values[:,0],'memb':estimate_train},index=range(len(train_class)))
+
+            clf_tree=tree.DecisionTreeClassifier(max_depth=1)
+            clf_tree.fit(res_with_class.memb.values.reshape(len(res_with_class),1),res_with_class.trainclass.values.reshape(len(res_with_class),1))
+            train_predict=clf_tree.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
+
+            #calculate test auc using the constructed model.
+            estimate_test=np.zeros(len(test_class))
+            for i in range(len(test_class)):
+                estimate_test[i]=rank(dlib.vector(X_test_distance[i,:]))
+
+            res_with_class=pd.DataFrame({'testclass':test_class.values[:,0],'memb':estimate_test},index=range(len(test_class)))
+            test_predict=clf_tree.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
+
+            performances_ = getPerformance(y_train['class'].values.reshape(-1), y_test['class'].values.reshape(-1), train_predict,test_predict)
+            performances_ = [elapsed_time] + performances_
+
+            all_res.append([dname, 'RankSVM']+[None,best_lr] + performances_+[num_coef_001,num_coef_01,num_coef_05,11+idx])  
+        
+        
         
         save_date = datetime.datetime.now().strftime('%m%d%y_%H%M%S')
         alg_type='RankSVM'

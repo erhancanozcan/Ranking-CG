@@ -258,7 +258,7 @@ if __name__ == '__main__':
                     method1.test_roc_list[len(method1.test_roc_list)-1],method1.test_accuracy_list[len(method1.test_accuracy_list)-1],\
                     method1.test_sensitivity_list[len(method1.test_sensitivity_list)-1], method1.test_specificity_list[len(method1.test_specificity_list)-1],\
                     method1.test_geometric_mean_list[len(method1.test_geometric_mean_list)-1],method1.test_precision_list[len(method1.test_precision_list)-1],\
-                    method1.test_fone_list[len(method1.test_fone_list)-1],num_coef_001,num_coef_01,num_coef_05])
+                    method1.test_fone_list[len(method1.test_fone_list)-1],num_coef_001,num_coef_01,num_coef_05,10])
             except:
                 all_res.append([dname, alg_type,None,best_lr] + [None,method1.train_roc_list[len(method1.train_roc_list)-1],method1.train_accuracy_list[len(method1.train_accuracy_list)-1],\
                     method1.train_sensitivity_list[len(method1.train_sensitivity_list)-1], method1.train_specificity_list[len(method1.train_specificity_list)-1],\
@@ -267,7 +267,58 @@ if __name__ == '__main__':
                     method1.test_roc_list[len(method1.test_roc_list)-1],method1.test_accuracy_list[len(method1.test_accuracy_list)-1],\
                     method1.test_sensitivity_list[len(method1.test_sensitivity_list)-1], method1.test_specificity_list[len(method1.test_specificity_list)-1],\
                     method1.test_geometric_mean_list[len(method1.test_geometric_mean_list)-1],method1.test_precision_list[len(method1.test_precision_list)-1],\
-                    method1.test_fone_list[len(method1.test_fone_list)-1],num_coef_001,num_coef_01,num_coef_05])
+                    method1.test_fone_list[len(method1.test_fone_list)-1],num_coef_001,num_coef_01,num_coef_05,10])
+                    
+            
+            #repeat train test 10 times test the best parameter on different datasets.       
+            for i in range(10):
+                X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                                                    stratify=y, 
+                                                                    test_size=0.25,random_state=11+i)
+                
+                y_train.columns = ['class']
+                y_test.columns = ['class']
+                dt_train  =X_train.copy()
+                dt_train['class'] = y_train
+
+
+                dt_test  =X_test.copy()
+                dt_test['class'] = y_test
+
+                X_train_distance = scipy.spatial.distance.cdist(X_train,X_train, 'euclidean')
+                X_test_distance = scipy.spatial.distance.cdist(X_test,X_train, 'euclidean')
+                
+                
+                method1=init_alg(alg_type,X_train,y_train,X_test,y_test,dt_train,dt_test,
+                                        distance="euclidian",stopping_condition=stp_cond,
+                                        stopping_percentage=stp_perc,lr=best_lr, alpha=alpha,
+                                        selected_col_index=0,scale=True,prot_stop_perc=prot_stop_perc,
+                                        max_epoch=max_epoch)
+
+                method1.run()
+                calc_weights=method1.fweight_list
+                num_coef_001=sum(abs(np.array(calc_weights))>0.001)
+                num_coef_01=sum(abs(np.array(calc_weights))>0.01)
+                num_coef_05=sum(abs(np.array(calc_weights))>0.05)
+
+                try:
+                    all_res.append([dname, alg_type,None,best_lr] + [method1.opt_time,method1.train_roc_list[len(method1.train_roc_list)-1],method1.train_accuracy_list[len(method1.train_accuracy_list)-1],\
+                        method1.train_sensitivity_list[len(method1.train_sensitivity_list)-1], method1.train_specificity_list[len(method1.train_specificity_list)-1],\
+                        method1.train_geometric_mean_list[len(method1.train_geometric_mean_list)-1],method1.train_precision_list[len(method1.train_precision_list)-1],\
+                        method1.train_fone_list[len(method1.train_fone_list)-1],\
+                        method1.test_roc_list[len(method1.test_roc_list)-1],method1.test_accuracy_list[len(method1.test_accuracy_list)-1],\
+                        method1.test_sensitivity_list[len(method1.test_sensitivity_list)-1], method1.test_specificity_list[len(method1.test_specificity_list)-1],\
+                        method1.test_geometric_mean_list[len(method1.test_geometric_mean_list)-1],method1.test_precision_list[len(method1.test_precision_list)-1],\
+                        method1.test_fone_list[len(method1.test_fone_list)-1],num_coef_001,num_coef_01,num_coef_05,11+i])
+                except:
+                    all_res.append([dname, alg_type,None,best_lr] + [None,method1.train_roc_list[len(method1.train_roc_list)-1],method1.train_accuracy_list[len(method1.train_accuracy_list)-1],\
+                        method1.train_sensitivity_list[len(method1.train_sensitivity_list)-1], method1.train_specificity_list[len(method1.train_specificity_list)-1],\
+                        method1.train_geometric_mean_list[len(method1.train_geometric_mean_list)-1],method1.train_precision_list[len(method1.train_precision_list)-1],\
+                        method1.train_fone_list[len(method1.train_fone_list)-1],\
+                        method1.test_roc_list[len(method1.test_roc_list)-1],method1.test_accuracy_list[len(method1.test_accuracy_list)-1],\
+                        method1.test_sensitivity_list[len(method1.test_sensitivity_list)-1], method1.test_specificity_list[len(method1.test_specificity_list)-1],\
+                        method1.test_geometric_mean_list[len(method1.test_geometric_mean_list)-1],method1.test_precision_list[len(method1.test_precision_list)-1],\
+                        method1.test_fone_list[len(method1.test_fone_list)-1],num_coef_001,num_coef_01,num_coef_05,11+i])
                     
         save_date = datetime.datetime.now().strftime('%m%d%y_%H%M%S')
         alg_type='l1_rank'
