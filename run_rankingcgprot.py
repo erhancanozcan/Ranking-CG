@@ -145,7 +145,7 @@ if __name__ == '__main__':
      #parsing arguments 
     args = parser.parse_args().kwargs
     
-    #args={'dname' : 'yeast6'}
+    args={'dname' : 'yeast6'}
     print(args)
 
     if args['dname'] == 'All':
@@ -192,7 +192,7 @@ if __name__ == '__main__':
         
         
         
-        stp_perc_list = [0.00005,0.0001,0.00025,0.0005,0.00075,0.001,0.0025,0.005,0.0075,0.01,0.025]
+        stp_perc_list = [0.00001,0.00005,0.0001,0.00025,0.0005,0.00075,0.001,0.0025,0.005,0.0075,0.01,0.025]
         stp_perc_list.reverse()
 
         stp_cond="tr_roc"
@@ -201,7 +201,7 @@ if __name__ == '__main__':
         prot_stop_perc=1e-5
         max_epoch=1000
 
-        no_of_folds=5
+        no_of_folds=min(5,min(np.unique(y_train, return_counts=True)[1]))
         skf = StratifiedKFold(n_splits=no_of_folds)
                                     
         # ranking_cg and ranking_cg_prototype

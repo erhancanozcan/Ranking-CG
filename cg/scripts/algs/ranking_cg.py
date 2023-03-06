@@ -543,7 +543,12 @@ class ranking_cg:
                 return False
             return True
         elif self.stopping_condition == "tr_roc":
-            prev_obj=self.train_roc_list[len(self.train_roc_list)-2]
+            
+            diff=5
+            if len(self.train_roc_list) > diff:
+                prev_obj=self.train_roc_list[len(self.train_roc_list)-1-diff]
+            else:
+                prev_obj=1e-6
             cur_obj=self.train_roc_list[len(self.train_roc_list)-1]
             
             stopper=True
