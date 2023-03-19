@@ -188,7 +188,16 @@ class full_rank(base_srcg):
             import matplotlib.pyplot as plt
             fig, ax = plt.subplots()
             ax.scatter(x=self.df_test.f0, y=self.df_test.f1, c=self.test_predictions,alpha=0.01)
-            ax.scatter(x=self.df.f0, y=self.df.f1, c=self.df['class'])
+            
+            pos_idx=self.df['class']==1
+            neg_idx=self.df['class']==-1
+            #ax.scatter(x=self.df.f0, y=self.df.f1, c=self.df['class'])
+            ax.scatter(x=self.df.f0[pos_idx], y=self.df.f1[pos_idx], color='yellow',marker='o',label='+ class')
+            ax.scatter(x=self.df.f0[neg_idx], y=self.df.f1[neg_idx], color='purple',marker='v',label='- class')
+            ax.set_xlabel('x')
+            ax.set_ylabel('y')
+            #ax.set_ylim((0,15))
+            ax.legend(loc="lower right")
             #fig
             address="/Users/can/Desktop/ranking_cg_extension/plots/"
             fig.savefig(address+name+".png")
