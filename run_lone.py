@@ -203,7 +203,7 @@ if __name__ == '__main__':
         prot_stop_perc=1e-5
         max_epoch=1000
 
-        no_of_folds=5
+        no_of_folds=min(5,min(np.unique(y_train,return_counts=True)[1]))
         skf = StratifiedKFold(n_splits=no_of_folds)
         
         

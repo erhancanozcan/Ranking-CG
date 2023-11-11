@@ -558,6 +558,11 @@ class base_srcg:
     def stopping_criteria(self):
         #raise NotImplementedError
         if self.stopping_condition == "tr_obj":
+            
+            if self.counter>100:
+                stopper=True
+                return stopper
+            
             prev_obj=self.objective_values[len(self.objective_values)-2]
             cur_obj=self.objective_values[len(self.objective_values)-1]
             
