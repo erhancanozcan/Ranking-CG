@@ -37,6 +37,8 @@ def calc_pnorm_dist(to_this,from_this,p,dist_type):
         for j in range(row_no):
             if dist_type=="euclidian":
                 result[j,i]=(sum(abs(from_this[j,:]-to_this[i,:])**2))**0.5
+            elif dist_type=="sq_euclidian":
+                result[j,i]=(sum(abs(from_this[j,:]-to_this[i,:])**2))
             elif dist_type =="pnorm":
                 raise NotImplementedError()
 
@@ -87,6 +89,11 @@ class ranking_cg:
         if self.distance=="euclidian":
             self.data_distance=pd.DataFrame(distance_matrix(data_matrix, data_matrix), index=df.index, columns=df.index)
             self.full_data_distance=calc_pnorm_dist(data_matrix,data_matrix,-1,"euclidian")
+        elif self.distance=="sq_euclidian":
+            self.data_distance=pd.DataFrame(distance_matrix(data_matrix, data_matrix), index=df.index, columns=df.index)
+            self.data_distance=self.data_distance**2
+            self.full_data_distance=calc_pnorm_dist(data_matrix,data_matrix,-1,"sq_euclidian")
+            #self.full_data_distance=self.full_data_distance**2
         else:
             print("not written")
         self.pairs_distance_dif_table=pd.DataFrame(pairs,columns=['pos_sample','neg_sample'])
@@ -350,6 +357,11 @@ class ranking_cg:
             dist_tmp=(test_data_numpy - focused_data_point)**2
             dist_tmp=dist_tmp.sum(axis=1)
             dist_tmp=np.sqrt(dist_tmp)
+        elif self.distance=="sq_euclidian":
+    
+            dist_tmp=(test_data_numpy - focused_data_point)**2
+            dist_tmp=dist_tmp.sum(axis=1)
+            #dist_tmp=np.sqrt(dist_tmp)
         else:
             print("notavailablethisdistancetype")
         
@@ -425,6 +437,19 @@ class ranking_cg:
         if lr != None:
             raise Exception("There is no parameter in ranking_cg.")
         
+        
+        weight_vals=[self.weights[i].X for i in range(len(self.weights))]
+        
+        names_to_retrieve=[]
+        for i in range(len(self.pos)):
+            for j in range(len(self.neg)):
+                names_to_retrieve.append("e["+str(i)+","+str(j)+"]")
+                
+        error_vars=[]
+        
+        error_vars.append([self.m.getVarByName(name) for name in names_to_retrieve])
+        
+        
         #latest_weights=self.weight_record[-1]
         #latest_weights=self.reference_weights()
         num_variables=self.counter
@@ -440,7 +465,20 @@ class ranking_cg:
         
         self.m.update()
         
-        self.m.Params.Method=1#1
+        
+        
+        for t in range (len(self.weights)-1):
+           self.weights[t].PStart=weight_vals[t]
+        self.weights[len(self.weights)-1].PStart=0  
+        
+        iter_num=self.errors_list.shape[0]-1
+        for i in range (len(self.pos)):
+            for j in range (len(self.neg)):
+                error_vars[0][i*len(self.neg)+j].PStart=self.errors_list[iter_num,i,j]
+        
+        
+        self.m.Params.Method=0#1
+        self.m.Params.LPWarmStart=2#1
         start_time=datetime.datetime.now()
         self.m.optimize()
         end_time=datetime.datetime.now()
@@ -581,20 +619,24 @@ class ranking_cg:
             if plot==True:
                 import matplotlib.pyplot as plt
                 fig, ax = plt.subplots()
-                ax.scatter(x=self.df_test.f0, y=self.df_test.f1, c=self.test_predictions,alpha=0.01)
+                #ax.scatter(x=self.df_test.f0, y=self.df_test.f1, c=self.test_predictions,alpha=0.01)
+                pos_pred=self.test_predictions==1
+                neg_pred=self.test_predictions==-1
+                ax.scatter(x=self.df_test.f0[pos_pred], y=self.df_test.f1[pos_pred], color='green',alpha=0.01)
+                ax.scatter(x=self.df_test.f0[neg_pred], y=self.df_test.f1[neg_pred], color='purple',alpha=0.02)
                 
                 pos_idx=self.df['class']==1
                 neg_idx=self.df['class']==-1
                 
                 #ax.scatter(x=self.df.f0, y=self.df.f1, c=self.df['class'])
-                ax.scatter(x=self.df.f0[pos_idx], y=self.df.f1[pos_idx], color='yellow',marker='o',label='+ class')
+                ax.scatter(x=self.df.f0[pos_idx], y=self.df.f1[pos_idx], color='green',marker='o',label='+ class')
                 ax.scatter(x=self.df.f0[neg_idx], y=self.df.f1[neg_idx], color='purple',marker='v',label='- class')
                 #selected ref points
                 #prototypes
                 prot_loc=np.concatenate([np.expand_dims(m,axis=0) for m in self.focused_point_list])
                 ax.scatter(x=prot_loc[:,0],y=prot_loc[:,1],c='red',marker='x',label='reference')
-                ax.set_xlabel('x')
-                ax.set_ylabel('y')
+                ax.set_xlabel('feature 1')
+                ax.set_ylabel('feature 2')
                 #ax.set_ylim((0,15))
                 ax.legend(loc="lower right")
                 #fig

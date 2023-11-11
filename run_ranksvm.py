@@ -193,6 +193,7 @@ if __name__ == '__main__':
         
         #C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+list(5*np.array([pow(10,i) for i in np.linspace(-5,5,11)]))
         C_alternatives = [pow(10,i) for i in np.linspace(-4,4,9)]+list(5*np.array([pow(10,i) for i in np.linspace(-4,3,8)]))
+        C_alternatives = [pow(10,i) for i in np.linspace(-3,3,7)]+list(5*np.array([pow(10,i) for i in np.linspace(-3,2,6)]))
         C_alternatives.sort()
         
         stp_perc_list = [0.001,0.005,0.01,0.05,0.1,0.5,1,5,10]
@@ -342,7 +343,7 @@ if __name__ == '__main__':
         res_with_class=pd.DataFrame({'testclass':test_class.values[:,0],'memb':estimate_test},index=range(len(test_class)))
         test_predict=clf_tree.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
 
-        performances_ = getPerformance(y_train['class'].values.reshape(-1), y_test['class'].values.reshape(-1), train_predict,test_predict)
+        performances_ = getPerformance(y_train['class'].values.reshape(-1), y_test['class'].values.reshape(-1), train_predict,test_predict,estimate_train,estimate_test)
         performances_ = [elapsed_time] + performances_
 
         all_res.append([dname, 'RankSVM']+[None,best_lr] + performances_+[num_coef_001,num_coef_01,num_coef_05,10])    
@@ -417,7 +418,7 @@ if __name__ == '__main__':
             res_with_class=pd.DataFrame({'testclass':test_class.values[:,0],'memb':estimate_test},index=range(len(test_class)))
             test_predict=clf_tree.predict(res_with_class.memb.values.reshape(len(res_with_class),1))
 
-            performances_ = getPerformance(y_train['class'].values.reshape(-1), y_test['class'].values.reshape(-1), train_predict,test_predict)
+            performances_ = getPerformance(y_train['class'].values.reshape(-1), y_test['class'].values.reshape(-1), train_predict,test_predict,estimate_train,estimate_test)
             performances_ = [elapsed_time] + performances_
 
             all_res.append([dname, 'RankSVM']+[None,best_lr] + performances_+[num_coef_001,num_coef_01,num_coef_05,11+idx])  

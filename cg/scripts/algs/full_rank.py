@@ -152,8 +152,12 @@ class full_rank(base_srcg):
         test_data_numpy=self.test_data.values
            
         te_tr_distance=pd.DataFrame(distance_matrix(test_data_numpy, self.train_data), index=self.test_data.index)
+        if self.distance == "sq_euclidian":
+            te_tr_distance=te_tr_distance**2
+        
         te_tr_distance=te_tr_distance.values
-        te_tr_distance = (te_tr_distance - self.mean_to_scale_test) / (self.sd_to_scale_test)    
+        if self.scale==True: 
+            te_tr_distance = (te_tr_distance - self.mean_to_scale_test) / (self.sd_to_scale_test)    
         res=np.dot(te_tr_distance[:,self.fcol_list],self.fweight_list)
         res=res.reshape(len(res),1)
         
@@ -187,15 +191,19 @@ class full_rank(base_srcg):
         if plot==True:
             import matplotlib.pyplot as plt
             fig, ax = plt.subplots()
-            ax.scatter(x=self.df_test.f0, y=self.df_test.f1, c=self.test_predictions,alpha=0.01)
+            #ax.scatter(x=self.df_test.f0, y=self.df_test.f1, c=self.test_predictions,alpha=0.01)
+            pos_pred=self.test_predictions==1
+            neg_pred=self.test_predictions==-1
+            ax.scatter(x=self.df_test.f0[pos_pred], y=self.df_test.f1[pos_pred], color='green',alpha=0.01)
+            ax.scatter(x=self.df_test.f0[neg_pred], y=self.df_test.f1[neg_pred], color='purple',alpha=0.02)
             
             pos_idx=self.df['class']==1
             neg_idx=self.df['class']==-1
             #ax.scatter(x=self.df.f0, y=self.df.f1, c=self.df['class'])
-            ax.scatter(x=self.df.f0[pos_idx], y=self.df.f1[pos_idx], color='yellow',marker='o',label='+ class')
+            ax.scatter(x=self.df.f0[pos_idx], y=self.df.f1[pos_idx], color='green',marker='o',label='+ class')
             ax.scatter(x=self.df.f0[neg_idx], y=self.df.f1[neg_idx], color='purple',marker='v',label='- class')
-            ax.set_xlabel('x')
-            ax.set_ylabel('y')
+            ax.set_xlabel('feature 1')
+            ax.set_ylabel('feature 2')
             #ax.set_ylim((0,15))
             ax.legend(loc="lower right")
             #fig

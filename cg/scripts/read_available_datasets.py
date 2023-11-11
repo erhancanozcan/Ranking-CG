@@ -1309,7 +1309,7 @@ def selected_data_set(datasetname,location):
         test_y=np.arange(-3+0.001,+3,0.05)
         
         test_x=np.linspace(-3, 3, 120)
-        test_y=np.linspace(0, 11, 220)
+        test_y=np.linspace(0, 12, 220)
         
         
         test_data=np.array(np.meshgrid(test_x, test_y)).T.reshape(-1,2)
@@ -1327,6 +1327,105 @@ def selected_data_set(datasetname,location):
         #del class_data,col_names,col_no,data,data_norm,i,row_names
         
         return df,df_test,test_class,test_data,train_class,train_data 
+    
+    
+    elif datasetname=="inner_circles":
+        
+        num_points=100
+
+        np.random.seed(5)
+
+        random_nums=np.random.uniform(0,1,num_points)
+
+
+        theta = random_nums * 2 * math.pi * 0.85
+
+
+        posx= 0 + 0.5 * np.cos(theta)+np.random.normal(0,0.03,num_points)
+        posy= 0 + 0.5 * np.sin(theta)+np.random.normal(0,0.03,num_points)
+
+        pos=np.concatenate([posx.reshape((-1, 1)),posy.reshape((-1, 1))],axis=1)
+        pos=np.concatenate([pos,np.repeat(1,len(random_nums)).reshape(-1,1)],axis=1)
+        pos=np.concatenate([pos,np.array([[-0.25,-0.4,-1],
+                                          [-0.20,-0.45,-1],
+                                          [0.4,-0.1,-1],
+                                          [0.4,-0.1,-1],
+                                          [0.4,-0.1,-1]])])
+
+
+
+        num_points=200
+        random_nums=np.random.uniform(0,1,num_points)
+
+
+        theta = random_nums * 2 * math.pi 
+        
+        negx= 0 + 1 * np.cos(theta)+np.random.normal(0,0.07,num_points)
+        negy= 0 + 1 * np.sin(theta)+np.random.normal(0,0.07,num_points)
+
+        neg=np.concatenate([negx.reshape((-1, 1)),negy.reshape((-1, 1))],axis=1)
+        neg=np.concatenate([neg,np.repeat(-1,len(random_nums)).reshape(-1,1)],axis=1)
+        neg=np.concatenate([neg,np.array([[-0.25,0.95,1],
+                                          [0,0,1]])])
+
+
+        data=np.concatenate([pos,neg],axis=0)
+        
+        #plt.scatter(x=data[:,0],y=data[:,1])
+
+        
+
+
+        #####here
+        data=pd.DataFrame(data,columns=['f0','f1','class'])
+        data=data.drop(data.sample(frac=.5,random_state=11).index)
+        
+        
+        row_names=[]
+        for i in range(len(data)):
+            row_names.append( "p" + str(i))
+            
+        data.index=row_names
+        
+        
+        class_data=data[['class']]
+        data=data.drop(['class'], axis=1)
+        
+        data_norm=data
+        
+        from sklearn.model_selection import train_test_split
+        train_data, test_data, train_class, test_class = train_test_split(data_norm, class_data, test_size = 0.001, random_state = 2)
+        df=pd.concat([train_data, train_class], axis=1)
+        #unused_data, test_data, unused_class, test_class = train_test_split(test_data, test_class, test_size = 0.05, random_state = 5)
+        
+        
+        
+        #test data generation to shade the region.
+        test_x=np.arange(-3+0.001,+3,0.05)
+        test_y=np.arange(-3+0.001,+3,0.05)
+        
+        test_x=np.linspace(-1.5, 1.5, 120)
+        test_y=np.linspace(-1.5, 1.5, 220)
+        
+        
+        test_data=np.array(np.meshgrid(test_x, test_y)).T.reshape(-1,2)
+        test_data=pd.DataFrame(test_data,columns=['f0','f1'])
+        test_data['class']=1
+        test_data.iat[0,2]=-1
+        test_data.iat[10,2]=-1
+        
+        df_test=test_data
+        
+        test_class=df_test[['class']]
+        test_data=df_test.drop(['class'], axis=1)
+        
+        #df_test=pd.concat([test_data,test_class],axis=1)
+        #del class_data,col_names,col_no,data,data_norm,i,row_names
+        
+        return df,df_test,test_class,test_data,train_class,train_data 
+
+        
+        
 
 
     elif datasetname=="rectangle":

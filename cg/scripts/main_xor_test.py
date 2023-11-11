@@ -8,7 +8,7 @@ sys.path.append(folder_location)
 
 
 #dataset name
-d_name="parabol_3" #parabol_3
+d_name="xor" #parabol_3
 
 #folder_location=folder_location+"/github_column_generation"
 #data_location=folder_location+"/data"
@@ -125,10 +125,10 @@ Parameters:
 
 
 
-alg_type="ranking_cg"
-stp_perc=0.01#0.01
-stp_cond="tr_obj"
-lr=1.0
+alg_type="base"
+stp_perc=0.000001#0.01
+stp_cond="tr_roc"
+lr=0.1
 alpha=0.1
 prot_stop_perc=1e-5
 max_epoch=1000
@@ -140,7 +140,7 @@ method1=init_alg(alg_type,train_data,train_class,test_data,test_class,df,df_test
                           selected_col_index=0,scale=True,prot_stop_perc=prot_stop_perc,
                           max_epoch=max_epoch)
 
-method1.run(plot=True,name="deneme_ranking_cg_")
+method1.run(plot=False,name="acircles_ranking_cg_prototype_")
 #method1.run()
 
 #All the statistics that we want to check.

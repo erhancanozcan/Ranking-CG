@@ -9,9 +9,9 @@ from imblearn.metrics import geometric_mean_score
 import time
 import scipy
 
-def getPerformance(real_train_outcomes, real_test_outcomes, predicted_train_outcomes,predicted_test_outcomes):
-	roc_train = roc_auc_score(real_train_outcomes, predicted_train_outcomes)
-	roc_test = roc_auc_score(real_test_outcomes, predicted_test_outcomes)
+def getPerformance(real_train_outcomes, real_test_outcomes, predicted_train_outcomes,predicted_test_outcomes,tr_scores,te_scores):
+	roc_train = roc_auc_score(real_train_outcomes, tr_scores)
+	roc_test = roc_auc_score(real_test_outcomes, te_scores)
 
 	acc_train = accuracy_score(real_train_outcomes, predicted_train_outcomes)
 	acc_test = accuracy_score(real_test_outcomes, predicted_test_outcomes)

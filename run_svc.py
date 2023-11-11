@@ -193,6 +193,7 @@ if __name__ == '__main__':
 
         #C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+list(5*np.array([pow(10,i) for i in np.linspace(-5,5,11)]))
         C_alternatives = [pow(10,i) for i in np.linspace(-4,4,9)]+list(5*np.array([pow(10,i) for i in np.linspace(-4,3,8)]))
+        #C_alternatives = [1,2]
         C_alternatives.sort()
 
 
@@ -212,8 +213,12 @@ if __name__ == '__main__':
 
         predicted_train = base_estimator.predict(X_train_distance)
         predicted_test = base_estimator.predict(X_test_distance)
+        
+        tr_scores = base_estimator.decision_function(X_train_distance)
+        te_scores = base_estimator.decision_function(X_test_distance)
+        
 
-        performances_ = getPerformance(y_train.values.reshape(-1), y_test.values.reshape(-1), predicted_train,predicted_test)
+        performances_ = getPerformance(y_train.values.reshape(-1), y_test.values.reshape(-1), predicted_train,predicted_test,tr_scores,te_scores)
         performances_ = [elapsed_time] + performances_
 
         num_coef_001=sum(abs(np.array(base_estimator.coef_[0]))>0.001)
@@ -247,7 +252,13 @@ if __name__ == '__main__':
             predicted_train = base_estimator.predict(X_train_distance_tmp)
             predicted_test = base_estimator.predict(X_test_distance_tmp)
 
-            performances_ = getPerformance(y_train_tmp.values.reshape(-1), y_test_tmp.values.reshape(-1), predicted_train,predicted_test)
+            tr_scores = base_estimator.decision_function(X_train_distance)
+            te_scores = base_estimator.decision_function(X_test_distance)
+            
+
+            performances_ = getPerformance(y_train.values.reshape(-1), y_test.values.reshape(-1), predicted_train,predicted_test,tr_scores,te_scores)
+
+
             performances_ = [elapsed_time] + performances_
 
             num_coef_001=sum(abs(np.array(base_estimator.coef_[0]))>0.001)
@@ -275,7 +286,13 @@ if __name__ == '__main__':
         predicted_train = base_estimator.predict(X_train_distance)
         predicted_test = base_estimator.predict(X_test_distance)
 
-        performances_ = getPerformance(y_train.values.reshape(-1), y_test.values.reshape(-1), predicted_train,predicted_test)
+
+        tr_scores = base_estimator.decision_function(X_train_distance)
+        te_scores = base_estimator.decision_function(X_test_distance)
+        
+
+        performances_ = getPerformance(y_train.values.reshape(-1), y_test.values.reshape(-1), predicted_train,predicted_test,tr_scores,te_scores)
+
         performances_ = [elapsed_time] + performances_
 
         num_coef_001=sum(abs(np.array(base_estimator.coef_[0]))>0.001)
@@ -309,7 +326,12 @@ if __name__ == '__main__':
             predicted_train = base_estimator.predict(X_train_distance_tmp)
             predicted_test = base_estimator.predict(X_test_distance_tmp)
 
-            performances_ = getPerformance(y_train_tmp.values.reshape(-1), y_test_tmp.values.reshape(-1), predicted_train,predicted_test)
+            tr_scores = base_estimator.decision_function(X_train_distance)
+            te_scores = base_estimator.decision_function(X_test_distance)
+            
+    
+            performances_ = getPerformance(y_train.values.reshape(-1), y_test.values.reshape(-1), predicted_train,predicted_test,tr_scores,te_scores)
+
             performances_ = [elapsed_time] + performances_
 
             num_coef_001=sum(abs(np.array(base_estimator.coef_[0]))>0.001)
@@ -337,7 +359,12 @@ if __name__ == '__main__':
         predicted_train = base_estimator.predict(X_train_distance)
         predicted_test = base_estimator.predict(X_test_distance)
 
-        performances_ = getPerformance(y_train.values.reshape(-1), y_test.values.reshape(-1), predicted_train,predicted_test)
+        tr_scores = base_estimator.decision_function(X_train_distance)
+        te_scores = base_estimator.decision_function(X_test_distance)
+        
+
+        performances_ = getPerformance(y_train.values.reshape(-1), y_test.values.reshape(-1), predicted_train,predicted_test,tr_scores,te_scores)
+
         performances_ = [elapsed_time] + performances_
 
 
@@ -374,7 +401,12 @@ if __name__ == '__main__':
             predicted_train = base_estimator.predict(X_train_distance_tmp)
             predicted_test = base_estimator.predict(X_test_distance_tmp)
 
-            performances_ = getPerformance(y_train_tmp.values.reshape(-1), y_test_tmp.values.reshape(-1), predicted_train,predicted_test)
+            tr_scores = base_estimator.decision_function(X_train_distance)
+            te_scores = base_estimator.decision_function(X_test_distance)
+            
+    
+            performances_ = getPerformance(y_train.values.reshape(-1), y_test.values.reshape(-1), predicted_train,predicted_test,tr_scores,te_scores)
+
             performances_ = [elapsed_time] + performances_
 
             num_coef_001=sum(abs(np.array(base_estimator.coef_[0]))>0.001)
@@ -402,7 +434,12 @@ if __name__ == '__main__':
         predicted_train = base_estimator.predict(X_train_distance)
         predicted_test = base_estimator.predict(X_test_distance)
 
-        performances_ = getPerformance(y_train.values.reshape(-1), y_test.values.reshape(-1), predicted_train,predicted_test)
+        tr_scores = base_estimator.decision_function(X_train_distance)
+        te_scores = base_estimator.decision_function(X_test_distance)
+        
+
+        performances_ = getPerformance(y_train.values.reshape(-1), y_test.values.reshape(-1), predicted_train,predicted_test,tr_scores,te_scores)
+
         performances_ = [elapsed_time] + performances_
         
         num_coef_001=sum(abs(np.array(base_estimator.coef_[0]))>0.001)
@@ -430,7 +467,7 @@ if __name__ == '__main__':
             X_test_distance_tmp = scipy.spatial.distance.cdist(X_test_tmp,X_train_tmp, 'euclidean')
             
             
-            base_estimator = LinearSVC(penalty = sh.best_params_['penalty'],C = sh.best_params_['C'],class_weight = sh.best_params_['class_weight'],max_iter=100000)
+            base_estimator = LinearSVC(penalty = sh.best_params_['penalty'],C = sh.best_params_['C'],class_weight = sh.best_params_['class_weight'],max_iter=100000,dual=False)
             
             base_estimator.fit(X_train_distance_tmp,y_train_tmp.values.reshape(-1))
             elapsed_time = time.time() - start_time
@@ -438,7 +475,13 @@ if __name__ == '__main__':
             predicted_train = base_estimator.predict(X_train_distance_tmp)
             predicted_test = base_estimator.predict(X_test_distance_tmp)
 
-            performances_ = getPerformance(y_train_tmp.values.reshape(-1), y_test_tmp.values.reshape(-1), predicted_train,predicted_test)
+
+            tr_scores = base_estimator.decision_function(X_train_distance)
+            te_scores = base_estimator.decision_function(X_test_distance)
+            
+    
+            performances_ = getPerformance(y_train.values.reshape(-1), y_test.values.reshape(-1), predicted_train,predicted_test,tr_scores,te_scores)
+
             performances_ = [elapsed_time] + performances_
 
             num_coef_001=sum(abs(np.array(base_estimator.coef_[0]))>0.001)

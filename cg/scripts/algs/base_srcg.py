@@ -50,6 +50,7 @@ class base_srcg:
         self.selected_col_index=selected_col_index
         self.scale=scale
         self.counter=1
+        self.set_Q=[]
 
         
         
@@ -71,6 +72,9 @@ class base_srcg:
         
         if self.distance=="euclidian":
             self.data_distance=pd.DataFrame(distance_matrix(data_matrix, data_matrix), index=df.index, columns=df.index)
+        elif self.distance=="sq_euclidian":
+            self.data_distance=pd.DataFrame(distance_matrix(data_matrix, data_matrix), index=df.index, columns=df.index)
+            self.data_distance=self.data_distance**2
         else:
             print("not written")
         pairs_distance_dif_table=pd.DataFrame(pairs,columns=['pos_sample','neg_sample'])
@@ -79,6 +83,8 @@ class base_srcg:
         dimension=(len(pairs_distance_dif_table),df.shape[0])
         pairs_distance_dif_table=pairs_distance_dif_table.values
         self.tmp_dist_city=np.zeros(dimension)
+        self.pairs_distance_dif_table=pairs_distance_dif_table#will be used by srcg_prototype
+        self.prot_learning=np.zeros((len(pairs_distance_dif_table),df.shape[1]))
         self.data_distance_numpy=self.data_distance.values
         
         self.mean_to_scale_test=np.mean(self.data_distance_numpy,axis=0)
@@ -93,12 +99,17 @@ class base_srcg:
             index_neg=pairs_distance_dif_table[i,1]
             tmp_dif=self.data_distance_numpy[index_pos,:] - self.data_distance_numpy[index_neg,:]
             self.tmp_dist_city[i,:]=tmp_dif
+            self.prot_learning[i,:]=self.train_data.values[index_pos,:]-self.train_data.values[index_neg,:]
             
         
         #mean_to_scale_test=np.mean(tmp_dist_city,axis=0)
         #sd_to_scale_test=np.std(tmp_dist_city,axis=0)    
             
         #tmp_dist_city = (tmp_dist_city - tmp_dist_city.mean()) / (tmp_dist_city.std())
+        
+        #gram=np.dot(self.tmp_dist_city.T , self.tmp_dist_city)
+        #np.linalg.matrix_rank(self.tmp_dist_city)
+        #np.linalg.eig(gram)[0] #to see eigen values
         
         self.training_data_index=df.index.values
         self.col_names=[]
@@ -131,6 +142,7 @@ class base_srcg:
         
         self.used_cols=np.array(self.tmp_dist_city[:,self.selected_col_index],)
         self.used_cols.shape=(self.tmp_dist_city.shape[0],1)
+        self.set_Q.append(self.train_data.values[self.selected_col_index,:])
         
         self.used_cols_name=np.array(self.col_names[self.selected_col_index])
         self.used_cols_name=np.append(self.used_cols_name,self.col_names[self.selected_col_index])
@@ -295,6 +307,7 @@ class base_srcg:
         self.selected_col_index=int(selected_point_name[1:])
         
         self.w_name="w"+self.col_names[self.selected_col_index]
+        self.set_Q.append(self.train_data.values[self.selected_col_index,:])
         
         tmp=self.tmp_dist_city[:,self.selected_col_index]
         tmp.shape=(self.tmp_dist_city.shape[0],1)
@@ -322,6 +335,12 @@ class base_srcg:
             dist_tmp=(test_data_numpy - focused_data_point)**2
             dist_tmp=dist_tmp.sum(axis=1)
             dist_tmp=np.sqrt(dist_tmp)
+        elif self.distance=="sq_euclidian":
+    
+            dist_tmp=(test_data_numpy - focused_data_point)**2
+            dist_tmp=dist_tmp.sum(axis=1)
+            #dist_tmp=np.sqrt(dist_tmp)
+        
         else:
             print("notavailablethisdistancetype")
         
@@ -414,6 +433,7 @@ class base_srcg:
         new_var=self.selected_col_index
         
         self.weights[len(self.weights)] = self.m.addVar(lb=-GRB.INFINITY,name=self.w_name)
+        self.m.update()
         for i,j in itertools.product(range(len(self.pos)), range(len(self.neg))):
             self.m.chgCoeff(self.constrain[i,j],self.weights[len(self.weights)-1],self.tmp_dist_city[i*len(self.neg)+j,new_var])
         
@@ -546,9 +566,19 @@ class base_srcg:
             if cur_obj==1:
                 stopper=False
             return stopper
+        
+        elif self.stopping_condition == "num_f":
+            stopper=True
+            if self.stopping_percentage == 1:
+                stopper=False
+            if len(self.train_roc_list)==self.stopping_percentage:
+                stopper=False
+            
+            return stopper
+            
 
     
-    def run(self):
+    def run(self,plot=False,name=None):
         
         self.lr=self.lr_init
         

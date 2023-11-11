@@ -186,6 +186,19 @@ class ranking_cg_prototype(ranking_cg):
         
     def solve_problem_with_new_column(self):
 
+        
+        weight_vals=[self.weights[i].X for i in range(len(self.weights))]
+        
+        names_to_retrieve=[]
+        for i in range(len(self.pos)):
+            for j in range(len(self.neg)):
+                names_to_retrieve.append("e["+str(i)+","+str(j)+"]")
+                
+        error_vars=[]
+        
+        error_vars.append([self.m.getVarByName(name) for name in names_to_retrieve])
+
+
         self.w_name="w"+str(self.counter)
         
         
@@ -222,8 +235,20 @@ class ranking_cg_prototype(ranking_cg):
         
         
         self.m.update()
+        
+        
+        for t in range (len(self.weights)-1):
+           self.weights[t].PStart=weight_vals[t]
+        self.weights[len(self.weights)-1].PStart=0  
+        
+        iter_num=self.errors_list.shape[0]-1
+        for i in range (len(self.pos)):
+            for j in range (len(self.neg)):
+                error_vars[0][i*len(self.neg)+j].PStart=self.errors_list[iter_num,i,j]
+        
         #self.m.write('/Users/can/Desktop/columngeneration/svm_second.lp')
-        self.m.Params.Method=1#1
+        self.m.Params.Method=0#It was 1 before
+        self.m.Params.LPWarmStart=2#1
         start_time=datetime.datetime.now()
         self.m.optimize()
         end_time=datetime.datetime.now()
@@ -400,18 +425,22 @@ class ranking_cg_prototype(ranking_cg):
             if plot==True:
                 import matplotlib.pyplot as plt
                 fig, ax = plt.subplots()
-                ax.scatter(x=self.df_test.f0, y=self.df_test.f1, c=self.test_predictions,alpha=0.01)
+                #ax.scatter(x=self.df_test.f0, y=self.df_test.f1, c=self.test_predictions,alpha=0.01)
+                pos_pred=self.test_predictions==1
+                neg_pred=self.test_predictions==-1
+                ax.scatter(x=self.df_test.f0[pos_pred], y=self.df_test.f1[pos_pred], color='green',alpha=0.01)
+                ax.scatter(x=self.df_test.f0[neg_pred], y=self.df_test.f1[neg_pred], color='purple',alpha=0.02)
                 
                 pos_idx=self.df['class']==1
                 neg_idx=self.df['class']==-1
                 #ax.scatter(x=self.df.f0, y=self.df.f1, c=self.df['class'])
-                ax.scatter(x=self.df.f0[pos_idx], y=self.df.f1[pos_idx], color='yellow',marker='o',label='+ class')
+                ax.scatter(x=self.df.f0[pos_idx], y=self.df.f1[pos_idx], color='green',marker='o',label='+ class')
                 ax.scatter(x=self.df.f0[neg_idx], y=self.df.f1[neg_idx], color='purple',marker='v',label='- class')
                 #prototypes
                 prot_loc=np.concatenate([np.expand_dims(m,axis=0) for m in self.focused_point_list])
                 ax.scatter(x=prot_loc[:,0],y=prot_loc[:,1],c='red',marker='x',label='prototype')
-                ax.set_xlabel('x')
-                ax.set_ylabel('y')
+                ax.set_xlabel('feature 1')
+                ax.set_ylabel('feature 2')
                 #ax.set_ylim((0,15))
                 ax.legend(loc="lower right")
                 #fig
