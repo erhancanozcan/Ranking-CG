@@ -29,7 +29,8 @@ def init_alg(alg_type,train_data,train_class,test_data,test_class,df,df_test,
         return srcg_prototype(train_data,train_class,test_data,test_class,df,df_test,
                                   distance=distance,stopping_condition=stopping_condition,
                                   stopping_percentage=stopping_percentage,lr=lr,
-                                  selected_col_index=0,scale=scale)
+                                  selected_col_index=0,scale=scale,prot_stop_perc=prot_stop_perc,
+                                  max_epoch=max_epoch)
     
     
     elif alg_type == "dec_lr":

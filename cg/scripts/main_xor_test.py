@@ -125,10 +125,10 @@ Parameters:
 
 
 
-alg_type="base"
-stp_perc=0.000001#0.01
-stp_cond="tr_roc"
-lr=0.1
+alg_type="srcg_prototype"
+stp_perc=0.001#0.01
+stp_cond="tr_obj"
+lr=1.0
 alpha=0.1
 prot_stop_perc=1e-5
 max_epoch=1000

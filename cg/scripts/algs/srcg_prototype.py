@@ -22,6 +22,8 @@ from sklearn.metrics import f1_score
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import roc_auc_score
 
+import tensorflow as tf
+
 
 def calc_pnorm_dist(to_this,from_this,p,dist_type):
     
@@ -47,7 +49,7 @@ class srcg_prototype(base_srcg):
     def __init__(self,train_data,train_class,test_data,test_class,df,df_test,
                       distance="sq_euclidian",stopping_condition=None,
                       stopping_percentage=None,lr=None,
-                      selected_col_index=0,scale=True):
+                      selected_col_index=0,scale=True,prot_stop_perc=1e-5,max_epoch=1000):
         
      
         
@@ -56,8 +58,8 @@ class srcg_prototype(base_srcg):
                           stopping_percentage=stopping_percentage,lr=lr,
                           selected_col_index=0,scale=scale)
         
-        if distance != "sq_euclidian":
-            print("Distance has to be sq_euclidian in srcg_prototype approach")
+        if distance != "euclidian":
+            print("Distance has to be euclidian in srcg_prototype approach")
             raise NotImplementedError
             
         
@@ -74,12 +76,12 @@ class srcg_prototype(base_srcg):
         self.neg_data=self.train_data.values[self.neg,:]
         self.pos_neg_pairs=np.array([ x for x in itertools.product(self.pos_data,self.neg_data) ])
         
-        #self.pos_data=tf.constant(self.pos_neg_pairs[:,0,:].astype("float32"))
-        #self.neg_data=tf.constant(self.pos_neg_pairs[:,1,:].astype("float32"))
+        self.pos_data=tf.constant(self.pos_neg_pairs[:,0,:].astype("float32"))
+        self.neg_data=tf.constant(self.pos_neg_pairs[:,1,:].astype("float32"))
         
-        #self.prot_stop_perc=prot_stop_perc
-        #self.model_lr=lr
-        #self.max_epoch=max_epoch
+        self.prot_stop_perc=prot_stop_perc
+        self.model_lr=lr
+        self.max_epoch=max_epoch
         #self.model_optimizer = tf.keras.optimizers.Adam(
         #    learning_rate=self.model_lr)
         
@@ -94,42 +96,89 @@ class srcg_prototype(base_srcg):
             
     
     def find_new_column(self):
-
-    
-        #a=np.array([[2,3,-2],[-1,0,-3]])
-    
-        self.count_res_dot_product=self.prot_learning*self.duals[:,np.newaxis]
-        self.count_res_dot_product=np.sum(self.count_res_dot_product,axis=0)
         
         
-        binding_coefs=self.data_limits/self.count_res_dot_product
-        binding_coefs=binding_coefs.flatten()
-        
-        
-        
-        check_feas=np.dot(np.expand_dims(binding_coefs, axis=1),np.expand_dims(self.count_res_dot_product, axis=0))
-        feas_list=[]
-        
-        
-        for idx in range (check_feas.shape[0]):
+        @tf.function
+        def get_loss(duals,weights):
             
-            tmp=True
-            for i in range(self.data_limits.shape[0]):
-                
-                
-                if (check_feas[idx,i]>self.data_limits[i,0]-1e-3) & (check_feas[idx,i]<self.data_limits[i,1]+1e-3):
-                    tmp=True#dummy
-                else:
-                    tmp=False
-                    break
-            feas_list.append(tmp)
-        feas_list=np.array(feas_list)
-        feas_indices=np.where(feas_list)[0]
+            first=tf.norm(self.pos_data-weights,axis=1)
+            sec=tf.norm(self.neg_data-weights,axis=1)
+            
+            #return tf.abs(tf.matmul(np.expand_dims(duals,axis=0),tf.expand_dims(first-sec,axis=1)))
+            return -1*tf.abs(tf.reduce_sum(tf.multiply(duals,first-sec)))
         
-        maximizer_idx=np.argmax(np.abs(binding_coefs[feas_indices]))
+        iter_counter=0
+        #a=np.array([[2,3,-2],[-1,0,-3]])
         
-        self.new_point=check_feas[maximizer_idx,:]
-        self.w_name="w"+str(self.counter)
+        start_time=datetime.datetime.now()
+        self.location_convergence_obj=[1e-6]
+        res_dot_product=np.array(abs((self.full_tmp_dist.T).dot(self.duals)))
+    
+        if(self.counter==2):
+            self.max_res_dot=max(res_dot_product)
+        self.current_res_dot=max(res_dot_product)   
+    
+        record_objective=np.array(max(res_dot_product))
+        
+        index_of_p=np.argmax(res_dot_product)
+        location_of_init_point=self.train_data.values[index_of_p,:]
+        
+        #this uses median initialization.
+        #tmp=calc_pnorm_dist((self.focused_point_list[len(self.focused_point_list)-1]).reshape(1,self.train_data.shape[1]),self.train_data.values,self.p,self.distance)
+        #index_of_p=np.where(tmp==np.sort(tmp,axis=0)[len(tmp)//2])[0][0]
+        #location_of_init_point=self.train_data.values[index_of_p,:]
+        
+        limits=self.data_limits
+        A=self.pos_neg_pairs
+        dual_vars=self.duals.astype("float32")
+        
+        
+        
+
+        #tf.reset_default_graph()
+        
+        
+        no_of_points=A.shape[0]
+        batch_size=no_of_points
+        
+        #pos=tf.constant(self.pos_data)
+        #neg=tf.constant(self.neg_data)
+        
+        weights = tf.Variable(location_of_init_point+self.rng.normal(0,0.1,len(location_of_init_point)), dtype=tf.float32, trainable=True, name="weights")
+        stopper=True
+        best=location_of_init_point
+        best_obj=0
+        while stopper:
+            with tf.GradientTape() as tape:
+                
+                #loss=self.get_loss(dual_vars,weights)
+                loss=get_loss(dual_vars,weights)
+                #loss=self.graph_loss(dual_vars,weights)
+                #diff=self.graph_loss(weights)
+                #loss=-1*tf.abs(tf.reduce_sum(tf.multiply(dual_vars,diff)))
+                self.location_convergence_obj.append(loss.numpy())
+            grads=tape.gradient(loss,weights)
+            
+            self.model_optimizer.apply_gradients(zip([grads],[weights]))
+            prev=self.location_convergence_obj[-2]
+            cur=self.location_convergence_obj[-1]
+            if abs(cur-prev)/abs(prev) < self.prot_stop_perc or iter_counter==self.max_epoch:
+                #print(self.location_convergence_obj)
+                stopper=False
+            iter_counter+=1
+            if cur < best_obj:
+                best_obj=cur
+                best=weights.numpy()
+        end_time=datetime.datetime.now()
+        #self.new_point=weights.numpy()
+        #if abs(self.location_convergence_obj[1])<abs(cur):
+        #    self.new_point=weights.numpy()
+        #    print("better point is found")
+        #else:
+        #    self.new_point=location_of_init_point
+        self.new_point=best
+        self.opt_time+=(end_time-start_time).seconds
+        print("The best objective is %f:\nThe initial objective is %f:"%(best_obj,self.location_convergence_obj[1]))
         
         
     def predict_test_data(self):
@@ -217,6 +266,9 @@ class srcg_prototype(base_srcg):
             self.m.update()
             
         
+        self.w_name="w"+str(self.counter)
+            
+        
         self.weights[len(self.weights)] = self.m.addVar(lb=-GRB.INFINITY,name=self.w_name)
         self.m.update()
         
@@ -264,7 +316,7 @@ class srcg_prototype(base_srcg):
         start_time=datetime.datetime.now()
         self.m.optimize()
         end_time=datetime.datetime.now()
-        self.opt_difference=self.opt_difference+(end_time-start_time).seconds
+        self.opt_time+=(end_time-start_time).seconds
          
         self.duals=np.array([self.constrain[i,j].Pi for i in range(len(self.pos)) \
                                                     for j in range(len(self.neg))])
@@ -338,3 +390,28 @@ class srcg_prototype(base_srcg):
     
     def schedule_lr(self):
         self.lr=self.lr_init
+        
+        
+    def run(self,plot=False,name=None):
+        
+        self.lr=self.lr_init
+        
+        self.data_preprocess()
+        self.solve_problem_first_time()
+        self.predict_test_data()
+        
+        stopper=True
+        #i=0
+        while stopper:
+            tf.keras.backend.clear_session()
+            self.model_optimizer = tf.keras.optimizers.Adam(
+                learning_rate=self.model_lr)
+            self.find_new_column()
+            self.schedule_lr()
+            self.solve_problem_with_new_column(self.lr)
+            self.predict_test_data()
+            stopper=self.stopping_criteria()
+        
+        
+        
+        

@@ -26,6 +26,24 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import f1_score
 
 
+def calc_pnorm_dist(to_this,from_this,p,dist_type):
+    
+    col_no=to_this.shape[0]
+    row_no=from_this.shape[0]
+    
+    result=np.zeros(row_no*col_no).reshape(row_no,col_no)
+    p=0.5
+    for i in range(col_no):
+        for j in range(row_no):
+            if dist_type=="euclidian":
+                result[j,i]=(sum(abs(from_this[j,:]-to_this[i,:])**2))**0.5
+            elif dist_type=="sq_euclidian":
+                result[j,i]=(sum(abs(from_this[j,:]-to_this[i,:])**2))
+            elif dist_type =="pnorm":
+                raise NotImplementedError()
+
+    return result
+
 
 class base_srcg:
     
@@ -72,6 +90,7 @@ class base_srcg:
         
         if self.distance=="euclidian":
             self.data_distance=pd.DataFrame(distance_matrix(data_matrix, data_matrix), index=df.index, columns=df.index)
+            self.full_data_distance=calc_pnorm_dist(data_matrix,data_matrix,-1,"euclidian")
         elif self.distance=="sq_euclidian":
             self.data_distance=pd.DataFrame(distance_matrix(data_matrix, data_matrix), index=df.index, columns=df.index)
             self.data_distance=self.data_distance**2
@@ -86,6 +105,8 @@ class base_srcg:
         self.pairs_distance_dif_table=pairs_distance_dif_table#will be used by srcg_prototype
         self.prot_learning=np.zeros((len(pairs_distance_dif_table),df.shape[1]))
         self.data_distance_numpy=self.data_distance.values
+        tmp_dim=(len(self.pairs_distance_dif_table),len(data_matrix))
+        self.full_tmp_dist=np.zeros(tmp_dim)
         
         self.mean_to_scale_test=np.mean(self.data_distance_numpy,axis=0)
         self.sd_to_scale_test=np.std(self.data_distance_numpy,axis=0)    
@@ -100,6 +121,8 @@ class base_srcg:
             tmp_dif=self.data_distance_numpy[index_pos,:] - self.data_distance_numpy[index_neg,:]
             self.tmp_dist_city[i,:]=tmp_dif
             self.prot_learning[i,:]=self.train_data.values[index_pos,:]-self.train_data.values[index_neg,:]
+            full_tmp_dif=self.full_data_distance[index_pos,:] - self.full_data_distance[index_neg,:]
+            self.full_tmp_dist[i,:]=full_tmp_dif
             
         
         #mean_to_scale_test=np.mean(tmp_dist_city,axis=0)
@@ -190,7 +213,7 @@ class base_srcg:
         start_time=datetime.datetime.now()		
         self.m.optimize()
         end_time=datetime.datetime.now()
-        self.opt_difference=(end_time-start_time).seconds
+        self.opt_time=(end_time-start_time).seconds
         self.m.getVars()
         
         self.errors_list=np.zeros(1*len(self.pos)*len(self.neg))
@@ -261,7 +284,9 @@ class base_srcg:
         
         
         #you take the dot product of dot product of each row with duals.
+        start_time=datetime.datetime.now()
         res_dot_product=np.array(abs((self.remained_cols.T).dot(self.duals)))
+        self.opt_time+=(datetime.datetime.now()-start_time).seconds
         
         #this part keeps the correlation of features whether + or -
         
@@ -458,7 +483,7 @@ class base_srcg:
         start_time=datetime.datetime.now()
         self.m.optimize()
         end_time=datetime.datetime.now()
-        self.opt_difference=self.opt_difference+(end_time-start_time).seconds
+        self.opt_time+=(datetime.datetime.now()-start_time).seconds
          
         self.duals=np.array([self.constrain[i,j].Pi for i in range(len(self.pos)) \
                                                     for j in range(len(self.neg))])
