@@ -1,5 +1,5 @@
-data_location = '/Users/can/Documents/GitHub/Ranking-CG/Datasets'
-#data_location = '/home/erhan/Ranking-CG/Datasets'
+#data_location = '/Users/can/Documents/GitHub/Ranking-CG/Datasets'
+data_location = '/home/erhan/Ranking-CG/Datasets'
 import os
 import sys
 import pandas as pd
@@ -145,7 +145,7 @@ if __name__ == '__main__':
      #parsing arguments 
     args = parser.parse_args().kwargs
     
-    args={'dname' : 'yeast6'}
+    #args={'dname' : 'yeast6'}
     print(args)
 
     if args['dname'] == 'All':
@@ -201,7 +201,9 @@ if __name__ == '__main__':
         prot_stop_perc=1e-5
         max_epoch=1000
 
-        no_of_folds=min(5,min(np.unique(y_train, return_counts=True)[1]))
+        no_of_folds=min(5,min(np.unique(y_train,return_counts=True)[1]))
+        print(np.unique(y_train,return_counts=True))
+        print('%d no folds'%no_of_folds)
         skf = StratifiedKFold(n_splits=no_of_folds)
                                     
         # ranking_cg and ranking_cg_prototype

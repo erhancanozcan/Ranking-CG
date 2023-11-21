@@ -1,5 +1,5 @@
-data_location = '/Users/can/Documents/GitHub/Ranking-CG/Datasets'
-#data_location = '/home/erhan/Ranking-CG/Datasets'
+#data_location = '/Users/can/Documents/GitHub/Ranking-CG/Datasets'
+data_location = '/home/erhan/Ranking-CG/Datasets'
 import os
 import sys
 import pandas as pd

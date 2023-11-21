@@ -1,5 +1,5 @@
-data_location = '/Users/can/Documents/GitHub/Ranking-CG/Datasets'
-#data_location = '/home/erhan/Ranking-CG/Datasets'
+#data_location = '/Users/can/Documents/GitHub/Ranking-CG/Datasets'
+data_location = '/home/erhan/Ranking-CG/Datasets'
 import os
 import sys
 import pandas as pd
@@ -193,7 +193,7 @@ if __name__ == '__main__':
         
         #C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+list(5*np.array([pow(10,i) for i in np.linspace(-5,5,11)]))
         #C_alternatives = [pow(10,i) for i in np.linspace(-4,4,9)]+list(5*np.array([pow(10,i) for i in np.linspace(-4,3,8)]))+list(25*np.array([pow(10,i) for i in np.linspace(-4,2,6)]))
-        C_alternatives = [pow(10,i) for i in np.linspace(-4,4,9)]+list(5*np.array([pow(10,i) for i in np.linspace(-4,3,8)]))
+        C_alternatives = [pow(10,i) for i in np.linspace(-3,3,7)]+list(5*np.array([pow(10,i) for i in np.linspace(-3,2,6)]))
         C_alternatives.sort()
         
         stp_perc_list = [0.001,0.005,0.01,0.05,0.1,0.5,1,5,10]

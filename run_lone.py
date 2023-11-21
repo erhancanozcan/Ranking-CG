@@ -1,5 +1,5 @@
-data_location = '/Users/can/Documents/GitHub/Ranking-CG/Datasets'
-#data_location = '/home/erhan/Ranking-CG/Datasets'
+#data_location = '/Users/can/Documents/GitHub/Ranking-CG/Datasets'
+data_location = '/home/erhan/Ranking-CG/Datasets'
 import os
 import sys
 import pandas as pd
@@ -192,7 +192,7 @@ if __name__ == '__main__':
         
         
         #C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+list(5*np.array([pow(10,i) for i in np.linspace(-5,5,11)]))
-        C_alternatives = [pow(10,i) for i in np.linspace(-4,4,9)]+list(5*np.array([pow(10,i) for i in np.linspace(-4,3,8)]))
+        C_alternatives = [pow(10,i) for i in np.linspace(-3,3,7)]+list(5*np.array([pow(10,i) for i in np.linspace(-3,2,6)]))
         C_alternatives.sort()
         
         stp_perc_list = [0.001,0.005,0.01,0.05,0.1,0.5,1,5,10]
@@ -203,7 +203,7 @@ if __name__ == '__main__':
         prot_stop_perc=1e-5
         max_epoch=1000
 
-        no_of_folds=min(5,min(np.unique(y_train,return_counts=True)[1]))
+        no_of_folds=min(5,min(np.unique(y_train, return_counts=True)[1]))
         skf = StratifiedKFold(n_splits=no_of_folds)
         
         

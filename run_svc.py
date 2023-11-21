@@ -1,5 +1,5 @@
-data_location = '/Users/can/Documents/GitHub/Ranking-CG/Datasets'
-#data_location = '/home/erhan/Ranking-CG/Datasets'
+#data_location = '/Users/can/Documents/GitHub/Ranking-CG/Datasets'
+data_location = '/home/erhan/Ranking-CG/Datasets'
 import os
 import sys
 import pandas as pd
@@ -145,7 +145,7 @@ if __name__ == '__main__':
      #parsing arguments 
     args = parser.parse_args().kwargs
     
-    args={'dname' : 'survival'}
+    #args={'dname' : 'survival'}
     print(args)
 
     if args['dname'] == 'All':
@@ -192,7 +192,7 @@ if __name__ == '__main__':
 
 
         #C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+list(5*np.array([pow(10,i) for i in np.linspace(-5,5,11)]))
-        C_alternatives = [pow(10,i) for i in np.linspace(-4,4,9)]+list(5*np.array([pow(10,i) for i in np.linspace(-4,3,8)]))
+        C_alternatives = [pow(10,i) for i in np.linspace(-3,3,7)]+list(5*np.array([pow(10,i) for i in np.linspace(-3,2,6)]))
         #C_alternatives = [1,2]
         C_alternatives.sort()
 
