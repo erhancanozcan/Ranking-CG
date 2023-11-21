@@ -126,8 +126,8 @@ Parameters:
 
 
 alg_type="srcg_prototype"
-stp_perc=0.001#0.01
-stp_cond="tr_obj"
+stp_perc=30#0.01
+stp_cond="num_f"
 lr=1.0
 alpha=0.1
 prot_stop_perc=1e-5
@@ -203,4 +203,33 @@ ax.scatter(x=df_test.f0, y=df_test.f1, c=method1.test_predictions,alpha=0.05)
 ax.scatter(x=df.f0, y=df.f1, c=df['class'])
 #ax.scatter(x=prot_loc[:,0],y=prot_loc[:,1],c='red')
 fig
+#%%
+
+
+#NEED to take average. Current, version is noisy.
+srcg_prot_test_AUC=method1.test_roc_list
+ranking_cg_prot_unb_test_AUC=method1.test_roc_list
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+fig, ax = plt.subplots()
+
+ax.plot(np.arange(len(ranking_cg_prot_unb_test_AUC)),ranking_cg_prot_unb_test_AUC,label="Unbounded Ranking-CG Prototype")
+ax.plot(np.arange(len(srcg_prot_test_AUC)),srcg_prot_test_AUC,label="Smooth Ranking-CG Prototype")
+ax.legend(loc="lower right")
+ax.set_xlabel('Number of Iterations')
+ax.set_ylabel('AUC')
+ax.set_title('Test AUC vs Number of Iterations')                
+#fig
+address="/Users/can/Desktop/ranking_cg_extension/plots/"
+name="Test AUC Comparison"
+#fig.savefig(address+name+str(i)+".png")
+fig.savefig(address+name+".svg")
+
+
+
+
 

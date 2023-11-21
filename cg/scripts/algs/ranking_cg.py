@@ -597,6 +597,15 @@ class ranking_cg:
             if cur_obj==1:
                 stopper=False
             return stopper
+        
+        elif self.stopping_condition == "num_f":
+            stopper=True
+            if self.stopping_percentage == 1:
+                stopper=False
+            if len(self.train_roc_list)==self.stopping_percentage:
+                stopper=False
+            
+            return stopper
 
     
     def run(self,plot=False,name=None):

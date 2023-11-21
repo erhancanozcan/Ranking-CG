@@ -9,6 +9,7 @@ from cg.scripts.algs.l1_rank_cg import l1_rank_cg
 from cg.scripts.algs.l_inf_rank import l_inf_rank
 from cg.scripts.algs.ranking_cg import ranking_cg
 from cg.scripts.algs.ranking_cg_prototype import ranking_cg_prototype
+from cg.scripts.algs.ranking_cg_prototype_unb import ranking_cg_prototype_unb
 
 """"Interface to algorithms"""
 
@@ -84,6 +85,16 @@ def init_alg(alg_type,train_data,train_class,test_data,test_class,df,df_test,
                                   stopping_percentage=stopping_percentage,lr=lr,
                                   selected_col_index=selected_col_index,scale=scale,prot_stop_perc=prot_stop_perc,
                                   max_epoch=max_epoch)
+    
+    elif alg_type == "ranking_cg_prototype_unb":
+        # no smoothing but learning rate is scaled by iteration number.
+        return ranking_cg_prototype_unb(train_data,train_class,test_data,test_class,df,df_test,
+                                  distance=distance,stopping_condition=stopping_condition,
+                                  stopping_percentage=stopping_percentage,lr=lr,
+                                  selected_col_index=selected_col_index,scale=scale,prot_stop_perc=prot_stop_perc,
+                                  max_epoch=max_epoch)
+    
+    
     elif alg_type == "full_rank":
         # no smoothing but learning rate is scaled by iteration number.
         return full_rank(train_data,train_class,test_data,test_class,df,df_test,

@@ -196,12 +196,15 @@ if __name__ == '__main__':
         
         #C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+list(5*np.array([pow(10,i) for i in np.linspace(-5,5,11)]))
         #C_alternatives = [pow(10,i) for i in np.linspace(-4,4,9)]+list(5*np.array([pow(10,i) for i in np.linspace(-4,3,8)]))
-        C_alternatives = [0.01,0.05,0.1,0.5,1.0,5.0,10,50,100]
+        #C_alternatives =  [pow(10,i) for i in np.linspace(-3,3,7)]+list(5*np.array([pow(10,i) for i in np.linspace(-3,2,6)]))
+        C_alternatives= [pow(10,i) for i in np.linspace(-6,0,7)] + list(5*np.array([pow(10,i) for i in np.linspace(-5,0,6)]))
+        #C_alternatives = [0.01,0.05,0.1,0.5,1.0,5.0,10,50,100]
         C_alternatives.sort()
         
         #stp_perc_list = [0.00005,0.0001,0.00025,0.0005,0.00075,0.001,0.0025,0.005,0.0075,0.01,0.025]
-        stp_perc_list = [0.001,0.0025,0.005,0.0075,0.01,0.025,0.05]
-        stp_perc_list.reverse()
+        stp_perc_list=[0.001]
+        #stp_perc_list = [0.001,0.0025,0.005,0.0075,0.01,0.025,0.05]
+        #stp_perc_list.reverse()
 
         stp_cond="tr_obj"
         #lr=1.0
@@ -257,7 +260,7 @@ if __name__ == '__main__':
             best_num_f=int(temp_.iloc[temp_[4].idxmax()][3])#best learning rate is found
             
             method1=init_alg(alg_type,X_train,y_train,X_test,y_test,dt_train,dt_test,
-                                    distance="euclidian",stopping_condition='num_f',
+                                    distance="euclidian",stopping_condition=stp_cond,
                                     stopping_percentage=best_num_f,lr=best_lr, alpha=alpha,
                                     selected_col_index=0,scale=True,prot_stop_perc=prot_stop_perc,
                                     max_epoch=max_epoch)
