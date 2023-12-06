@@ -197,7 +197,8 @@ if __name__ == '__main__':
         #C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+list(5*np.array([pow(10,i) for i in np.linspace(-5,5,11)]))
         #C_alternatives = [pow(10,i) for i in np.linspace(-4,4,9)]+list(5*np.array([pow(10,i) for i in np.linspace(-4,3,8)]))
         #C_alternatives =  [pow(10,i) for i in np.linspace(-3,3,7)]+list(5*np.array([pow(10,i) for i in np.linspace(-3,2,6)]))
-        C_alternatives= [pow(10,i) for i in np.linspace(-6,0,7)] + list(5*np.array([pow(10,i) for i in np.linspace(-5,0,6)]))
+        #C_alternatives= [pow(10,i) for i in np.linspace(-6,0,7)] + list(5*np.array([pow(10,i) for i in np.linspace(-5,0,6)]))
+        C_alternatives= [pow(10,i) for i in np.linspace(-6,0,7)] + list(5*np.array([pow(10,i) for i in np.linspace(-6,-1,6)]))
         #C_alternatives = [0.01,0.05,0.1,0.5,1.0,5.0,10,50,100]
         C_alternatives.sort()
         

@@ -61,6 +61,26 @@ plt.scatter(x=df.f0,y=df.f1,c=df['class'])
 #train_class=df[['class']]
 
 
+"""
+import matplotlib.pyplot as plt
+scatter_pos=df['class'] == 1
+scatter_neg=df['class'] == -1
+fig, ax = plt.subplots(figsize=(6.4,4.8))
+ax.scatter(x=df.loc[scatter_pos,:].f0,y=df.loc[scatter_pos,:].f1,label="Positive Instance",marker="v")
+ax.scatter(x=df.loc[scatter_neg,:].f0,y=df.loc[scatter_neg,:].f1,label="Negative Instance",marker="X")
+ax.legend(loc="upper center")
+ax.set_xlabel('Feature 1')
+ax.set_ylabel('Feature 2')
+ax.set_ylim((-0.6,2.0))
+ax.set_title('XOR')               
+#fig
+address="/Users/can/Desktop/ranking_cg_extension/plots/"
+name="ScatterPlotTestAUCComparison"
+#fig.savefig(address+name+str(i)+".png")
+fig.savefig(address+name+".svg")
+"""
+
+
 #%%
 
 #from cg.scripts.algs.init_alg import init_alg
@@ -78,7 +98,9 @@ Parameters:
                                 l_inf_rank
                                 ranking_cg
                                 ranking_cg_prototype
+                                ranking_cg_prototype_unb
                                 full_rank
+                                srcg_prototype
                                
                                
                                
@@ -125,10 +147,10 @@ Parameters:
 
 
 
-alg_type="srcg_prototype"
+alg_type="ranking_cg_prototype_unb"
 stp_perc=30#0.01
 stp_cond="num_f"
-lr=1.0
+lr=0.01#0.01 if we scale the objective by length.
 alpha=0.1
 prot_stop_perc=1e-5
 max_epoch=1000
@@ -207,6 +229,7 @@ fig
 
 
 #NEED to take average. Current, version is noisy.
+ranking_cg_prot_test_AUC=method1.test_roc_list
 srcg_prot_test_AUC=method1.test_roc_list
 ranking_cg_prot_unb_test_AUC=method1.test_roc_list
 
@@ -215,14 +238,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(6.4,4.8))
 
+ax.plot(np.arange(len(ranking_cg_prot_test_AUC)),ranking_cg_prot_test_AUC,label="Ranking-CG Prototype")
 ax.plot(np.arange(len(ranking_cg_prot_unb_test_AUC)),ranking_cg_prot_unb_test_AUC,label="Unbounded Ranking-CG Prototype")
 ax.plot(np.arange(len(srcg_prot_test_AUC)),srcg_prot_test_AUC,label="Smooth Ranking-CG Prototype")
 ax.legend(loc="lower right")
 ax.set_xlabel('Number of Iterations')
 ax.set_ylabel('AUC')
-ax.set_title('Test AUC vs Number of Iterations')                
+ax.set_title('Test AUC vs Number of Iterations')               
 #fig
 address="/Users/can/Desktop/ranking_cg_extension/plots/"
 name="Test AUC Comparison"

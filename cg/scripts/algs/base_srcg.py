@@ -175,6 +175,7 @@ class base_srcg:
         self.weights=self.m.addVars(1,lb=-GRB.INFINITY,name=w_name)
         errors  = self.m.addVars(len(self.pos),len(self.neg),lb=0.0,name="e")
         
+        #self.obj=quicksum(errors[f] for f in errors)
         self.obj=quicksum(errors[f] for f in errors)/len(errors)
         self.m.setObjective(self.obj, GRB.MINIMIZE)
         

@@ -49,7 +49,7 @@ class srcg_prototype(base_srcg):
     def __init__(self,train_data,train_class,test_data,test_class,df,df_test,
                       distance="sq_euclidian",stopping_condition=None,
                       stopping_percentage=None,lr=None,
-                      selected_col_index=0,scale=True,prot_stop_perc=1e-5,max_epoch=1000):
+                      selected_col_index=0,scale=True,prot_stop_perc=1e-5,max_epoch=1000,prototype_lr=0.001):
         
      
         
@@ -80,10 +80,10 @@ class srcg_prototype(base_srcg):
         self.neg_data=tf.constant(self.pos_neg_pairs[:,1,:].astype("float32"))
         
         self.prot_stop_perc=prot_stop_perc
-        self.model_lr=lr
+        self.prototype_lr=prototype_lr
         self.max_epoch=max_epoch
         #self.model_optimizer = tf.keras.optimizers.Adam(
-        #    learning_rate=self.model_lr)
+        #    learning_rate=self.prototype_lr)
         
         #self.pos_data=tf.constant(self.pos_data.astype("float32"))
         #self.neg_data=tf.constant(self.neg_data.astype("float32"))
@@ -405,7 +405,7 @@ class srcg_prototype(base_srcg):
         while stopper:
             tf.keras.backend.clear_session()
             self.model_optimizer = tf.keras.optimizers.Adam(
-                learning_rate=self.model_lr)
+                learning_rate=self.prototype_lr)
             self.find_new_column()
             self.schedule_lr()
             self.solve_problem_with_new_column(self.lr)

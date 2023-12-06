@@ -16,7 +16,7 @@ from cg.scripts.algs.ranking_cg_prototype_unb import ranking_cg_prototype_unb
 def init_alg(alg_type,train_data,train_class,test_data,test_class,df,df_test,
                           distance,stopping_condition,
                           stopping_percentage,lr, alpha,
-                          selected_col_index,scale,prot_stop_perc=None,max_epoch=None):
+                          selected_col_index,scale,prot_stop_perc=None,max_epoch=None,prototype_lr=0.001):
     #selected_col_index: the first column that we added manually to initiate CG iterations.
     
     if alg_type == "base":
@@ -31,7 +31,7 @@ def init_alg(alg_type,train_data,train_class,test_data,test_class,df,df_test,
                                   distance=distance,stopping_condition=stopping_condition,
                                   stopping_percentage=stopping_percentage,lr=lr,
                                   selected_col_index=0,scale=scale,prot_stop_perc=prot_stop_perc,
-                                  max_epoch=max_epoch)
+                                  max_epoch=max_epoch,prototype_lr=prototype_lr)
     
     
     elif alg_type == "dec_lr":
@@ -82,7 +82,7 @@ def init_alg(alg_type,train_data,train_class,test_data,test_class,df,df_test,
         # no smoothing but learning rate is scaled by iteration number.
         return ranking_cg_prototype(train_data,train_class,test_data,test_class,df,df_test,
                                   distance=distance,stopping_condition=stopping_condition,
-                                  stopping_percentage=stopping_percentage,lr=lr,
+                                  stopping_percentage=stopping_percentage,lr=prototype_lr,
                                   selected_col_index=selected_col_index,scale=scale,prot_stop_perc=prot_stop_perc,
                                   max_epoch=max_epoch)
     
@@ -90,7 +90,7 @@ def init_alg(alg_type,train_data,train_class,test_data,test_class,df,df_test,
         # no smoothing but learning rate is scaled by iteration number.
         return ranking_cg_prototype_unb(train_data,train_class,test_data,test_class,df,df_test,
                                   distance=distance,stopping_condition=stopping_condition,
-                                  stopping_percentage=stopping_percentage,lr=lr,
+                                  stopping_percentage=stopping_percentage,lr=prototype_lr,
                                   selected_col_index=selected_col_index,scale=scale,prot_stop_perc=prot_stop_perc,
                                   max_epoch=max_epoch)
     
