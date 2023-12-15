@@ -147,7 +147,7 @@ Parameters:
 
 
 
-alg_type="ranking_cg_prototype_unb"
+alg_type="srcg_prototype"
 stp_perc=30#0.01
 stp_cond="num_f"
 lr=0.01#0.01 if we scale the objective by length.

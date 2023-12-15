@@ -561,7 +561,7 @@ class base_srcg:
         if self.stopping_condition == "tr_obj":
             
             if self.counter>100:
-                stopper=True
+                stopper=False
                 return stopper
             
             prev_obj=self.objective_values[len(self.objective_values)-2]
@@ -586,6 +586,12 @@ class base_srcg:
                 return False
             return True
         elif self.stopping_condition == "tr_roc":
+            
+            
+            if self.counter>100:
+                stopper=False
+                return stopper
+            
             prev_obj=self.train_roc_list[len(self.train_roc_list)-2]
             cur_obj=self.train_roc_list[len(self.train_roc_list)-1]
             

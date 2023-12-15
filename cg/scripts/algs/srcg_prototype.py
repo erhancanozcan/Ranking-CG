@@ -346,7 +346,8 @@ class srcg_prototype(base_srcg):
         
         
         train_class_numpy=self.train_class.values
-        res_train=np.dot(self.data_distance_numpy[:,self.col_list],self.weight_list)
+        #res_train=np.dot(self.data_distance_numpy[:,self.col_list],self.weight_list)
+        res_train=np.dot(self.data_distance_numpy,self.weight_list)
         res_train=res_train.reshape(len(res_train),1)
         
         res_with_class=pd.DataFrame({'trainclass':train_class_numpy[:,0],'memb':res_train[:,0]},index=range(len(res_train)))
@@ -396,7 +397,7 @@ class srcg_prototype(base_srcg):
         
         self.lr=self.lr_init
         
-        self.data_preprocess()
+        #self.data_preprocess()
         self.solve_problem_first_time()
         self.predict_test_data()
         
