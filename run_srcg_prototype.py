@@ -1,5 +1,5 @@
-data_location = '/Users/can/Documents/GitHub/Ranking-CG/Datasets'
-#data_location = '/home/erhan/Ranking-CG/Datasets'
+#data_location = '/Users/can/Documents/GitHub/Ranking-CG/Datasets'
+data_location = '/home/erhan/Ranking-CG/Datasets'
 import os
 import sys
 import pandas as pd
@@ -146,8 +146,8 @@ if __name__ == '__main__':
      #parsing arguments 
     args = parser.parse_args().kwargs
     
-    args={'dname' : 'yeast6'}
-    print(args)
+    #args={'dname' : 'yeast6'}
+    #print(args)
 
     if args['dname'] == 'All':
         data_list = os.listdir(data_location)
@@ -196,10 +196,8 @@ if __name__ == '__main__':
         
         #C_alternatives = [pow(10,i) for i in np.linspace(-5,5,11)]+list(5*np.array([pow(10,i) for i in np.linspace(-5,5,11)]))
         #C_alternatives = [pow(10,i) for i in np.linspace(-4,4,9)]+list(5*np.array([pow(10,i) for i in np.linspace(-4,3,8)]))
-        #C_alternatives =  [pow(10,i) for i in np.linspace(-3,3,7)]+list(5*np.array([pow(10,i) for i in np.linspace(-3,2,6)]))
-        #C_alternatives= [pow(10,i) for i in np.linspace(-6,0,7)] + list(5*np.array([pow(10,i) for i in np.linspace(-5,0,6)]))
-        C_alternatives= [pow(10,i) for i in np.linspace(-6,0,7)] + list(5*np.array([pow(10,i) for i in np.linspace(-6,-1,6)]))
-        #C_alternatives = [0.01,0.05]
+        C_alternatives =  [pow(10,i) for i in np.linspace(-6,0,7)]+list(5*np.array([pow(10,i) for i in np.linspace(-6,-1,6)]))
+        #C_alternatives = [0.01,0.05,0.1,0.5,1.0,5.0,10,50,100]
         C_alternatives.sort()
         
         #stp_perc_list = [0.00005,0.0001,0.00025,0.0005,0.00075,0.001,0.0025,0.005,0.0075,0.01,0.025]
@@ -207,7 +205,7 @@ if __name__ == '__main__':
         #stp_perc_list = [0.001,0.0025,0.005,0.0075,0.01,0.025,0.05]
         #stp_perc_list.reverse()
 
-        stp_cond="tr_obj"
+        stp_cond="tr_roc"
         #lr=1.0
         alpha=0.1
         prot_stop_perc=1e-5
@@ -262,7 +260,7 @@ if __name__ == '__main__':
             
             method1=init_alg(alg_type,X_train,y_train,X_test,y_test,dt_train,dt_test,
                                     distance="euclidian",stopping_condition=stp_cond,
-                                    stopping_percentage=best_num_f,lr=best_lr, alpha=alpha,
+                                    stopping_percentage=stp_perc,lr=best_lr, alpha=alpha,
                                     selected_col_index=0,scale=True,prot_stop_perc=prot_stop_perc,
                                     max_epoch=max_epoch)
 
